@@ -26,27 +26,30 @@ const Login = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <form className="w-full max-w-xs" onSubmit={handleLogin}>
+    <div className="flex flex-col items-center justify-center h-screen bg-blue-100">
+      <form
+        className="w-full max-w-xs bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+        onSubmit={handleLogin}
+      >
         <input
           type="email"
           placeholder="Email"
-          className="input input-bordered w-full max-w-xs"
+          className="border rounded w-full max-w-xs mb-4"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
           type="password"
           placeholder="Password"
-          className="input input-bordered w-full max-w-xs mt-4"
+          className="border rounded w-full max-w-xs mb-4"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button type="submit" className="btn btn-primary mt-4">
+        <button type="submit" className="btn btn-primary w-full custom-blue">
           Login
         </button>
       </form>
-      {error && <p className="text-red-500">Login error: {error.message}</p>}
+      {error && <p className="text-red-600">Login error: {error.message}</p>}
     </div>
   );
 };
