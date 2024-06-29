@@ -28,24 +28,27 @@ const Login = () => {
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-blue-100">
       <form
-        className="w-full max-w-xs bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+        className="w-full max-w-xs bg-custom-white shadow-md rounded p-10 mb-4 border border-custom-darkwhite"
         onSubmit={handleLogin}
       >
         <input
           type="email"
           placeholder="Email"
-          className="border rounded w-full max-w-xs mb-4"
+          className="border border-custom-darkwhite rounded w-full max-w-xs mb-4 p-2"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
           type="password"
           placeholder="Password"
-          className="border rounded w-full max-w-xs mb-4"
+          className="border border-custom-darkwhite rounded w-full max-w-xs mb-4 p-2"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button type="submit" className="btn btn-primary w-full custom-blue">
+        <button
+          type="submit"
+          className="btn bg-custom-blue btn-primary w-full rounded text-custom-white p-2"
+        >
           Login
         </button>
       </form>
