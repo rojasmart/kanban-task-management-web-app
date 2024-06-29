@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { useMutation, gql } from "@apollo/client";
+import { gql, useMutation } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
 
 const LOGIN_MUTATION = gql`
-  mutation Login($email: String!, $password: String!) {
+  mutation login($email: String!, $password: String!) {
     login(email: $email, password: $password) {
       token
     }
@@ -13,16 +14,13 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [login, { data, loading, error }] = useMutation(LOGIN_MUTATION);
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    try {
-      const { data } = await login({ variables: { email, password } });
-      console.log(data.login.token);
-      // Store the token in local storage or handle it as needed
-    } catch (error) {
-      console.error("Login failed:", error);
-    }
+    const { data } = await login({ variables: { email, password } });
+    localStorage.setItem("token", data.login.token);
+    navigate("/");
   };
 
   return (
