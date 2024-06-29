@@ -29,20 +29,36 @@ const Login = () => {
         className="w-full max-w-xs bg-custom-white shadow-md rounded p-10 mb-4 border border-custom-darkwhite"
         onSubmit={handleLogin}
       >
-        <input
-          type="email"
-          placeholder="Email"
-          className="border border-custom-darkwhite rounded w-full max-w-xs mb-4 p-2"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          className="border border-custom-darkwhite rounded w-full max-w-xs mb-4 p-2"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="email"
+          >
+            Email
+          </label>
+          <input
+            type="email"
+            placeholder="Email"
+            className="border border-custom-darkwhite rounded w-full max-w-xs mb-4 p-2"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        <div className="mb-6">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="password"
+          >
+            Password
+          </label>
+          <input
+            type="password"
+            placeholder="Password"
+            className="border border-custom-darkwhite rounded w-full max-w-xs mb-4 p-2"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
         <button
           type="submit"
           className="btn bg-custom-blue btn-primary w-full rounded text-custom-white p-2"

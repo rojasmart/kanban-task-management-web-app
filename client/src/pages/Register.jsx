@@ -1,7 +1,7 @@
 // src/pages/Register.js
-import React, { useState } from "react";
+import { useState } from "react";
 import { gql, useMutation } from "@apollo/client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const REGISTER_MUTATION = gql`
   mutation register($email: String!, $password: String!) {
@@ -14,69 +14,84 @@ const REGISTER_MUTATION = gql`
 const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [register] = useMutation(REGISTER_MUTATION);
+  const [register, { loading, error }] = useMutation(REGISTER_MUTATION);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { data } = await register({ variables: { email, password } });
-    if (data.register.token) {
-      localStorage.setItem("token", data.register.token);
-      navigate("/");
+    try {
+      const { data } = await register({ variables: { email, password } });
+      if (data.register.token) {
+        localStorage.setItem("token", data.register.token);
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create a new account
-          </h2>
+    <div className="flex flex-col items-center justify-center h-screen bg-blue-100">
+      <form
+        className="w-full max-w-xs bg-custom-white shadow-md rounded p-10 mb-4 border border-custom-darkwhite"
+        onSubmit={handleSubmit}
+      >
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="email"
+          >
+            Email
+          </label>
+          <input
+            className="border border-custom-darkwhite rounded w-full max-w-xs mb-4 p-2"
+            id="email"
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <input type="hidden" name="remember" defaultValue="true" />
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-              />
-            </div>
-          </div>
-          <div>
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Sign Up
-            </button>
-          </div>
-        </form>
+        <div className="mb-6">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="password"
+          >
+            Password
+          </label>
+          <input
+            className="border border-custom-darkwhite rounded w-full max-w-xs mb-4 p-2"
+            id="password"
+            type="password"
+            placeholder="******************"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <button
+            type="submit"
+            className="btn bg-custom-blue btn-primary w-full rounded text-custom-white p-2"
+          >
+            Register
+          </button>
+        </div>
+      </form>
+      {error && (
+        <p className="text-red-500 text-xs italic">
+          Error registering: {error.message}
+        </p>
+      )}
+
+      <div className="mt-4">
+        <p className="text-center text-sm text-gray-600">
+          Already have an account?{" "}
+          <Link to="/" className="text-blue-500 hover:text-blue-700">
+            Login
+          </Link>
+        </p>
       </div>
     </div>
   );
