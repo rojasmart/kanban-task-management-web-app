@@ -68,12 +68,17 @@ const Login = () => {
       </form>
       {error && <p className="text-red-600">Login error: {error.message}</p>}
       {/* Add Link to Register below */}
-      <p className="mt-4">
-        Dont have an account?
-        <Link to="/register" className="text-blue-500 hover:text-blue-700">
-          Register
-        </Link>
-      </p>
+      <div className="mt-4">
+        <p className="text-center text-sm text-gray-600">
+          Dont have an account?
+          <Link
+            to="/register"
+            className="text-blue-500 hover:text-blue-700 ml-1 underline font-bold"
+          >
+            Register
+          </Link>
+        </p>
+      </div>
     </div>
   );
 };
