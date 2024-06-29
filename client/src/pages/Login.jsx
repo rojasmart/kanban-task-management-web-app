@@ -66,7 +66,11 @@ const Login = () => {
           Login
         </button>
       </form>
-      {error && <p className="text-red-600">Login error: {error.message}</p>}
+      {error && (
+        <p className="text-custom-red text-xs italic">
+          Login error: {error.message}
+        </p>
+      )}
       {/* Add Link to Register below */}
       <div className="mt-4">
         <p className="text-center text-sm text-gray-600">
