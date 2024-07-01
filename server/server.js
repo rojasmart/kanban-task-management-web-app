@@ -1,3 +1,4 @@
+// server.js
 const { ApolloServer, gql } = require("apollo-server-express");
 const express = require("express");
 const mongoose = require("mongoose");
@@ -76,23 +77,30 @@ const getUser = async (token) => {
   }
 };
 
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-  context: async ({ req }) => {
-    const token = req.headers.authorization || "";
-    const user = await getUser(token);
-    return { user };
-  },
-});
+const startServer = async () => {
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context: async ({ req }) => {
+      const token = req.headers.authorization || "";
+      const user = await getUser(token);
+      return { user };
+    },
+  });
 
-server.applyMiddleware({ app });
+  await server.start();
+  server.applyMiddleware({ app });
 
-mongoose.connect("mongodb://localhost/kanban", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+  mongoose
+    .connect(
+      "mongodb+srv://rogeriosvaldo:vPlYl0IrbMob3LYX@cluster0.gio4fm0.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+    )
+    .then(() => console.log("MongoDB connected"))
+    .catch((err) => console.error("MongoDB connection error:", err));
 
-app.listen({ port: 4000 }, () =>
-  console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
-);
+  app.listen({ port: 4000 }, () =>
+    console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
+  );
+};
+
+startServer();
