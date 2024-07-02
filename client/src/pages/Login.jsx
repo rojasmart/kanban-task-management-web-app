@@ -18,9 +18,28 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const { data } = await login({ variables: { email, password } });
-    localStorage.setItem("token", data.login.token);
-    navigate("/");
+    try {
+      const response = await login({ variables: { email, password } });
+      console.log("Login response:", response);
+      if (response.errors) {
+        console.error("GraphQL error:", response.errors);
+        // Handle GraphQL errors here
+      } else if (
+        response.data &&
+        response.data.login &&
+        response.data.login.token
+      ) {
+        console.log("Token received:", response.data.login.token);
+        localStorage.setItem("token", response.data.login.token);
+        // Log the token from localStorage
+        console.log("Stored token:", localStorage.getItem("token"));
+        navigate("/home");
+      } else {
+        console.error("Token not found in response");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+    }
   };
 
   return (
