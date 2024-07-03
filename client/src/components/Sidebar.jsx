@@ -8,7 +8,7 @@ function Sidebar() {
 
   return (
     <>
-      <div className={`sidebar ${isOpen ? "open" : ""}`}>
+      <div className={`sidebar bg-custom-white ${isOpen ? "open" : ""}`}>
         <a href="#">Link 1</a>
         <a href="#">Link 2</a>
         <a href="#">Link 3</a>
