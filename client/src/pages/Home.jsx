@@ -5,7 +5,7 @@ import ThreeDotMenu from "../components/ThreeDotMenu";
 export default function Home() {
   return (
     <>
-      <header className="bg-custom-white text-white p-4">
+      <header className="bg-custom-white text-white p-4 border-1 border-b-custom-red">
         <div className="container mx-auto flex justify-between items-center">
           <div className="logo">
             <img src={logoDark} alt="Logo" className="h-8" />
