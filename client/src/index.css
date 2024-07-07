@@ -8,17 +8,18 @@ body {
   @apply bg-custom-lightwhite;
 }
 
+.dark body {
+  @apply bg-custom-lightblack;
+}
+
 .sidebar {
-  height: 100%;
-  margin-top: 80px;
-  width: 0; /* Sidebar is hidden initially */
   position: fixed;
-  z-index: 1;
-  top: 0;
   left: 0;
+  top: 80px;
+  bottom: 0;
+  width: 0;
   overflow-x: hidden;
-  transition: 0.5s; /* Smooth transition */
-  padding-top: 60px;
+  transition: width 0.5s;
 }
 
 .sidebar a {
@@ -28,6 +29,15 @@ body {
   color: #818181;
   display: block;
   transition: 0.3s;
+}
+
+.sidebar a,
+.sidebar button {
+  display: block; /* Ensure they don't wrap or shrink below their natural size */
+  white-space: nowrap; /* Prevents text from wrapping */
+  overflow: hidden; /* Keeps the content from overflowing */
+  text-overflow: ellipsis; /* Adds an ellipsis if the text is too long */
+  min-width: 0; /* Allows the content to shrink to fit, but you can adjust this as needed */
 }
 
 .sidebar a:hover {
@@ -41,6 +51,13 @@ body {
 .toggle-btn {
   position: fixed;
   bottom: 15px;
+  left: 15px;
+  z-index: 2;
+}
+
+.theme-btn {
+  position: absolute;
+  bottom: 75px;
   left: 15px;
   z-index: 2;
 }
