@@ -1,14 +1,25 @@
 import logoDark from "../assets/logo-dark.svg";
+import logoLight from "../assets/logo-light.svg";
 import Sidebar from "../components/Sidebar";
 import ThreeDotMenu from "../components/ThreeDotMenu";
+import { useTheme } from "../../themeContext";
 
 export default function Home() {
+  const { isDarkMode } = useTheme();
   return (
     <>
-      <header className="bg-custom-white text-white p-4 border-1 border-b-custom-red">
+      <header
+        className={`${
+          isDarkMode ? "bg-custom-darkgray" : "bg-custom-white"
+        } text-white p-4 border-1 border-b-custom-red`}
+      >
         <div className="container mx-auto flex justify-between items-center">
           <div className="logo">
-            <img src={logoDark} alt="Logo" className="h-8" />
+            <img
+              src={isDarkMode ? logoLight : logoDark}
+              alt="Logo"
+              className="h-8"
+            />
           </div>
           <div className="nav-links flex items-center gap-4">
             <button className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6">

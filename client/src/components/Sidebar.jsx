@@ -1,36 +1,38 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useTheme } from "../../themeContext";
 import "../index.css";
 
 function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { isDarkMode, toggleDarkMode } = useTheme();
 
   const toggleSidebar = () => setIsOpen(!isOpen);
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-    if (!isDarkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  };
 
   return (
     <>
       <div
-        className={`sidebar ${
+        className={`sidebar  ${
           isDarkMode ? "bg-custom-darkgray" : "bg-custom-white"
         } ${isOpen ? "open" : ""}`}
       >
-        <a href="#" className="text-custom-dark dark:text-custom-light">
-          Link 1
-        </a>
-        <a href="#" className="text-custom-dark dark:text-custom-light">
-          Link 2
-        </a>
-        <a href="#" className="text-custom-dark dark:text-custom-light">
-          Link 3
-        </a>
+        <div className="pl-4">
+          <p className="title text-custom-lightgray pl-4 pb-4">All Boards</p>
+          <ul className="list">
+            <li>
+              <button>Platform Launch</button>
+            </li>
+            <li>
+              <button>Marketing Plan</button>
+            </li>
+            <li>
+              <button>Roadmap</button>
+            </li>
+            <li>
+              <button>+ Create New Board</button>
+            </li>
+          </ul>
+        </div>
+
         {/* Buttons moved inside the sidebar */}
         <div>
           <button
