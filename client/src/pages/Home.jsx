@@ -21,6 +21,7 @@ export default function Home() {
               className="h-8"
             />
           </div>
+          <p>Plaform Launch</p>
           <div className="nav-links flex items-center gap-4">
             <button className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6">
               Add new task
