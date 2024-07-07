@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../index.css";
 
 function Sidebar() {
@@ -18,9 +18,9 @@ function Sidebar() {
   return (
     <>
       <div
-        className={`sidebar bg-custom-white dark:bg-custom-dark ${
-          isOpen ? "open" : ""
-        }`}
+        className={`sidebar ${
+          isDarkMode ? "bg-custom-darkgray" : "bg-custom-white"
+        } ${isOpen ? "open" : ""}`}
       >
         <a href="#" className="text-custom-dark dark:text-custom-light">
           Link 1
@@ -34,9 +34,7 @@ function Sidebar() {
         {/* Buttons moved inside the sidebar */}
         <div>
           <button
-            className={`bg-custom-blue mt-4${
-              isDarkMode ? "bg-custom-light" : "bg-custom-dark"
-            } text-custom-white rounded-full p-3 pl-6 pr-6 theme-btn`}
+            className={`bg-custom-blue mt-4 text-custom-white rounded-full p-3 pl-6 pr-6 theme-btn`}
             onClick={toggleDarkMode}
           >
             Toggle Dark Mode
