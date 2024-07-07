@@ -3,8 +3,10 @@ import "../index.css";
 
 function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
+  const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
 
   return (
     <>
@@ -18,6 +20,14 @@ function Sidebar() {
         onClick={toggleSidebar}
       >
         {isOpen ? "Close" : "Open"} Sidebar
+      </button>
+      <button
+        className={`mt-4 ${
+          isDarkMode ? "bg-custom-light" : "bg-custom-dark"
+        } text-custom-white rounded-full p-3 pl-6 pr-6`}
+        onClick={toggleDarkMode}
+      >
+        Toggle Dark Mode
       </button>
     </>
   );
