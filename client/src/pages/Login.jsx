@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { useNavigate, Link } from "react-router-dom";
+//logo import
+import logoDark from "../assets/logo-dark.svg";
 
 const LOGIN_MUTATION = gql`
   mutation login($email: String!, $password: String!) {
@@ -48,6 +50,9 @@ const Login = () => {
         className="w-full max-w-xs bg-custom-white shadow-md rounded p-10 mb-4 border border-custom-darkwhite"
         onSubmit={handleLogin}
       >
+        <div className="flex justify-center items-center mb-8">
+          <img src={logoDark} alt="Logo" className="h-8" />
+        </div>
         <div className="mb-4">
           <label
             className="block text-gray-700 text-sm font-bold mb-2"
