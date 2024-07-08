@@ -16,7 +16,9 @@ function Sidebar() {
         } ${isOpen ? "open" : ""}`}
       >
         <div className="pl-4">
-          <p className="title text-custom-lightgray pl-4 pb-4">All Boards</p>
+          <p className="title text-custom-lightgray pl-4 pb-4 overflow-hidden whitespace-nowrap text-overflow-ellipsis">
+            All Boards
+          </p>
           <ul className="list">
             <li>
               <button>Platform Launch</button>
