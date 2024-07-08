@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTheme } from "../../themeContext";
+import IconBoard from "../assets/icon-board.svg";
 import "../index.css";
 
 function Sidebar() {
@@ -21,22 +22,28 @@ function Sidebar() {
           </p>
           <ul className="list">
             <li>
-              <button className="hover:bg-custom-blue hover:text-custom-white">
+              <button className="hover:bg-custom-blue text-custom-lightgray hover:text-custom-white flex items-center font-bold">
+                <img src={IconBoard} className="mr-2 " alt="Board Icon" />
                 Platform Launch
               </button>
             </li>
             <li>
-              <button className="hover:bg-custom-blue hover:text-custom-white">
+              <button className="hover:bg-custom-blue text-custom-lightgray hover:text-custom-white flex items-center font-bold ">
+                <img src={IconBoard} className="mr-2 " alt="Board Icon" />
                 Marketing Plan
               </button>
             </li>
             <li>
-              <button className="hover:bg-custom-blue hover:text-custom-white">
+              <button className="hover:bg-custom-blue text-custom-lightgray hover:text-custom-white flex items-center font-bold">
+                <img src={IconBoard} className="mr-2 " alt="Board Icon" />
                 Roadmap
               </button>
             </li>
             <li>
-              <button>+ Create New Board</button>
+              <button className="flex items-center text-custom-blue font-bold">
+                <img src={IconBoard} className="mr-2 " alt="Board Icon" />+
+                Create New Board
+              </button>
             </li>
           </ul>
         </div>

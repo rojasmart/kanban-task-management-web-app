@@ -34,7 +34,7 @@ body {
 
 .sidebar a,
 .sidebar button {
-  display: block; /* Ensure they don't wrap or shrink below their natural size */
+  /* Ensure they don't wrap or shrink below their natural size */
   white-space: nowrap; /* Prevents text from wrapping */
   overflow: hidden; /* Keeps the content from overflowing */
   text-overflow: ellipsis; /* Adds an ellipsis if the text is too long */
@@ -46,7 +46,7 @@ body {
 }
 
 .sidebar.open {
-  width: 250px; /* Width of the sidebar when it's open */
+  width: 290px; /* Width of the sidebar when it's open */
 }
 
 .toggle-btn {
@@ -78,17 +78,13 @@ body {
 
 .list button {
   border: none;
-
   padding: 10px 20px 10px 65px;
   text-align: left;
   text-decoration: none;
-  display: inline-block;
-
-  /* margin-right: 0px; */
   cursor: pointer;
   border-radius: 50px;
   transition: margin-right 0.4s ease-in-out;
-  width: 230px;
+  width: 260px;
   margin-left: -50px;
 }
 
