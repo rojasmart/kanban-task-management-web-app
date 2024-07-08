@@ -21,13 +21,19 @@ function Sidebar() {
           </p>
           <ul className="list">
             <li>
-              <button>Platform Launch</button>
+              <button className="hover:bg-custom-blue hover:text-custom-white">
+                Platform Launch
+              </button>
             </li>
             <li>
-              <button>Marketing Plan</button>
+              <button className="hover:bg-custom-blue hover:text-custom-white">
+                Marketing Plan
+              </button>
             </li>
             <li>
-              <button>Roadmap</button>
+              <button className="hover:bg-custom-blue hover:text-custom-white">
+                Roadmap
+              </button>
             </li>
             <li>
               <button>+ Create New Board</button>
