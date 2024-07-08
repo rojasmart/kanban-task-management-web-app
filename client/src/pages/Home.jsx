@@ -10,10 +10,10 @@ export default function Home() {
     <>
       <header
         className={`${
-          isDarkMode ? "bg-custom-darkgray" : "bg-custom-white"
-        } text-white p-4 border-1 border-b-custom-red`}
+          isDarkMode ? "bg-custom-darkgray" : "bg-custom-red"
+        } text-white p-4 pl-8 border-1 border-b-custom-red`}
       >
-        <div className="container mx-auto flex justify-between items-center">
+        <div className="mx-auto flex gap-5 items-center">
           <div className="logo">
             <img
               src={isDarkMode ? logoLight : logoDark}
@@ -21,12 +21,15 @@ export default function Home() {
               className="h-8"
             />
           </div>
-          <p>Plaform Launch</p>
-          <div className="nav-links flex items-center gap-4">
-            <button className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6">
-              Add new task
-            </button>
-            <ThreeDotMenu />
+
+          <div className="menu-wrapper flex items-center gap-5 ">
+            <p className="font-bold text-3xl">Plaform Launch</p>
+            <div className="nav-links flex items-center gap-4">
+              <button className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6">
+                Add new task
+              </button>
+              <ThreeDotMenu />
+            </div>
           </div>
         </div>
       </header>
