@@ -13,8 +13,8 @@ export default function Home() {
           isDarkMode ? "bg-custom-darkgray" : "bg-custom-red"
         } text-white p-4 pl-8 border-1 border-b-custom-red`}
       >
-        <div className="mx-auto flex gap-5 items-center">
-          <div className="logo">
+        <div className="mx-auto flex gap-5 items-center ">
+          <div className="logo  min-w-[235px]">
             <img
               src={isDarkMode ? logoLight : logoDark}
               alt="Logo"
@@ -22,7 +22,7 @@ export default function Home() {
             />
           </div>
 
-          <div className="menu-wrapper flex items-center gap-5 ">
+          <div className="menu-wrapper flex items-center gap-5 justify-between w-[100%]">
             <p className="font-bold text-3xl">Plaform Launch</p>
             <div className="nav-links flex items-center gap-4">
               <button className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6">
