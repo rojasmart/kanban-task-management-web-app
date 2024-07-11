@@ -17,7 +17,7 @@ function Sidebar() {
         } ${isOpen ? "open" : ""}`}
       >
         <div className="pl-4">
-          <p className="title text-custom-lightgray pl-4 pb-4 overflow-hidden whitespace-nowrap text-overflow-ellipsis">
+          <p className="title text-sm text-custom-lightgray pl-4 pb-4 overflow-hidden whitespace-nowrap text-overflow-ellipsis">
             All Boards
           </p>
           <ul className="list">

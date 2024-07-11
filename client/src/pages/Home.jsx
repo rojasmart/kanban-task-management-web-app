@@ -10,11 +10,11 @@ export default function Home() {
     <>
       <header
         className={`${
-          isDarkMode ? "bg-custom-darkgray" : "bg-custom-red"
+          isDarkMode ? "bg-custom-darkgray" : "bg-custom-white"
         } text-white p-4 pl-8 border-1 border-b-custom-red`}
       >
         <div className="mx-auto flex gap-5 items-center ">
-          <div className="logo  min-w-[235px]">
+          <div className="logo min-w-[235px]">
             <img
               src={isDarkMode ? logoLight : logoDark}
               alt="Logo"
@@ -23,7 +23,13 @@ export default function Home() {
           </div>
 
           <div className="menu-wrapper flex items-center gap-5 justify-between w-[100%]">
-            <p className="font-bold text-3xl">Plaform Launch</p>
+            <p
+              className={`font-bold text-2xl ${
+                isDarkMode ? "text-custom-lightgray" : "text-custom-dark"
+              }`}
+            >
+              Platform Launch
+            </p>
             <div className="nav-links flex items-center gap-4">
               <button className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6">
                 Add new task
