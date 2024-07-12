@@ -1,6 +1,7 @@
 import logoDark from "../assets/logo-dark.svg";
 import logoLight from "../assets/logo-light.svg";
 import Sidebar from "../components/Sidebar";
+import BoardPage from "./BoardPage";
 import ThreeDotMenu from "../components/ThreeDotMenu";
 import { useTheme } from "../../themeContext";
 
@@ -43,6 +44,7 @@ export default function Home() {
         <div className="flex flex-wrap justify-center">
           <p>This is home</p>
           <Sidebar />
+          <BoardPage />
         </div>
       </div>
     </>

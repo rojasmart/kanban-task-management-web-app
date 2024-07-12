@@ -13,8 +13,11 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/board/:boardName" component={BoardPage} />
+          {/* Adjust Home route to act as a layout for nested routes */}
+          <Route path="/home" element={<Home />}>
+            {/* Nested route for BoardPage */}
+            <Route path="board/:boardName" element={<BoardPage />} />
+          </Route>
           {/* Other routes */}
         </Routes>
       </Router>
