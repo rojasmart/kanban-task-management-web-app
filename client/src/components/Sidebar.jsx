@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTheme } from "../../themeContext";
+import { Link } from "react-router-dom";
 import IconBoard from "../assets/icon-board.svg";
 import "../index.css";
 
@@ -22,16 +23,31 @@ function Sidebar() {
           </p>
           <ul className="list">
             <li>
-              <button className="hover:bg-custom-blue text-custom-lightgray hover:text-custom-white flex items-center font-bold">
+              <Link
+                to="/board/platform-launch"
+                className="hover:bg-custom-blue text-custom-lightgray hover:text-custom-white flex items-center font-bold"
+              >
                 <img src={IconBoard} className="mr-2 " alt="Board Icon" />
                 Platform Launch
-              </button>
+              </Link>
             </li>
             <li>
-              <button className="hover:bg-custom-blue text-custom-lightgray hover:text-custom-white flex items-center font-bold ">
+              <Link
+                to="/board/marketing-plan"
+                className="hover:bg-custom-blue text-custom-lightgray hover:text-custom-white flex items-center font-bold "
+              >
                 <img src={IconBoard} className="mr-2 " alt="Board Icon" />
                 Marketing Plan
-              </button>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/board/roadmap"
+                className="hover:bg-custom-blue text-custom-lightgray hover:text-custom-white flex items-center font-bold"
+              >
+                <img src={IconBoard} className="mr-2 " alt="Board Icon" />
+                Roadmap
+              </Link>
             </li>
             <li>
               <button className="hover:bg-custom-blue text-custom-lightgray hover:text-custom-white flex items-center font-bold">
