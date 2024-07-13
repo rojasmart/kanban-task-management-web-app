@@ -1,9 +1,9 @@
 import logoDark from "../assets/logo-dark.svg";
 import logoLight from "../assets/logo-light.svg";
 import Sidebar from "../components/Sidebar";
-import BoardPage from "./BoardPage";
 import ThreeDotMenu from "../components/ThreeDotMenu";
 import { useTheme } from "../../themeContext";
+import { Outlet } from "react-router-dom";
 
 export default function Home() {
   const { isDarkMode } = useTheme();
@@ -44,7 +44,8 @@ export default function Home() {
         <div className="flex flex-wrap justify-center">
           <p>This is home</p>
           <Sidebar />
-          <BoardPage />
+
+          <Outlet />
         </div>
       </div>
     </>
