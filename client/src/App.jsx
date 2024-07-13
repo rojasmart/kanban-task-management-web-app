@@ -15,10 +15,8 @@ function App() {
           <Route path="/register" element={<Register />} />
           {/* Adjust Home route to act as a layout for nested routes */}
           <Route path="/home" element={<Home />}>
-            {/* Nested route for BoardPage */}
-            <Route path="board/:boardName" element={<BoardPage />} />
+            <Route path=":boardName" element={<BoardPage />} />
           </Route>
-          {/* Other routes */}
         </Routes>
       </Router>
     </ThemeProvider>

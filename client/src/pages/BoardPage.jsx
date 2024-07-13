@@ -6,7 +6,7 @@ function BoardPage() {
   return (
     <div>
       <h1>{boardName.replace(/-/g, " ")}</h1>
-      {/* Display board content here */}
+      hello
     </div>
   );
 }

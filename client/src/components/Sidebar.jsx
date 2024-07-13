@@ -24,7 +24,7 @@ function Sidebar() {
           <ul className="list">
             <li>
               <Link
-                to="/board/platform-launch"
+                to="platform-launch"
                 className="hover:bg-custom-blue text-custom-lightgray hover:text-custom-white flex items-center font-bold"
               >
                 <img src={IconBoard} className="mr-2 " alt="Board Icon" />
@@ -33,7 +33,7 @@ function Sidebar() {
             </li>
             <li>
               <Link
-                to="/board/marketing-plan"
+                to="marketing-plan"
                 className="hover:bg-custom-blue text-custom-lightgray hover:text-custom-white flex items-center font-bold "
               >
                 <img src={IconBoard} className="mr-2 " alt="Board Icon" />
@@ -42,7 +42,7 @@ function Sidebar() {
             </li>
             <li>
               <Link
-                to="/board/roadmap"
+                to="roadmap"
                 className="hover:bg-custom-blue text-custom-lightgray hover:text-custom-white flex items-center font-bold"
               >
                 <img src={IconBoard} className="mr-2 " alt="Board Icon" />
