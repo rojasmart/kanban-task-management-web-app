@@ -23,7 +23,42 @@ const userSchema = new mongoose.Schema({
   password: String,
 });
 
+// Schema for Kanban Items
+const kanbanItemSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true,
+  },
+  description: String,
+  status: {
+    type: String,
+    enum: ["todo", "in progress", "done"],
+    default: "todo",
+  },
+  board: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Board",
+    required: true,
+  },
+});
+
+// Schema for Boards
+const boardSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  items: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "KanbanItem",
+    },
+  ],
+});
+
 const User = mongoose.model("User", userSchema);
+const KanbanItem = mongoose.model("KanbanItem", kanbanItemSchema);
+const Board = mongoose.model("Board", boardSchema);
 
 // GraphQL type definitions
 const typeDefs = gql`
@@ -33,13 +68,46 @@ const typeDefs = gql`
     token: String
   }
 
+  type KanbanItem {
+    id: ID!
+    title: String!
+    description: String
+    status: String
+    board: Board
+  }
+
+  type Board {
+    id: ID!
+    name: String!
+    items: [KanbanItem]
+  }
+
   type Query {
     me: User
+    boards: [Board]
+    board(id: ID!): Board
+    kanbanItems: [KanbanItem]
+    kanbanItem(id: ID!): KanbanItem
   }
 
   type Mutation {
     login(email: String!, password: String!): User
     register(email: String!, password: String!): User
+    createBoard(name: String!): Board
+    createKanbanItem(
+      title: String!
+      description: String
+      status: String
+      boardId: ID!
+    ): KanbanItem
+    updateKanbanItem(
+      id: ID!
+      title: String
+      description: String
+      status: String
+    ): KanbanItem
+    deleteBoard(id: ID!): Board
+    deleteKanbanItem(id: ID!): KanbanItem
   }
 `;
 
@@ -74,6 +142,38 @@ const resolvers = {
       console.log("Generated JWT token:", token);
       return { id: user.id, email: user.email, token };
     },
+    createBoard: (_, { name }) => {
+      const newBoard = new Board({ name });
+      return newBoard.save();
+    },
+    createKanbanItem: (_, { title, description, status, boardId }) => {
+      const newKanbanItem = new KanbanItem({
+        title,
+        description,
+        status,
+        board: boardId,
+      });
+      return newKanbanItem.save();
+    },
+    updateKanbanItem: (_, { id, title, description, status }) => {
+      return KanbanItem.findByIdAndUpdate(
+        id,
+        { title, description, status },
+        { new: true }
+      );
+    },
+    deleteBoard: (_, { id }) => {
+      return Board.findByIdAndRemove(id);
+    },
+    deleteKanbanItem: (_, { id }) => {
+      return KanbanItem.findByIdAndRemove(id);
+    },
+  },
+  Board: {
+    items: (board) => KanbanItem.find({ board: board.id }),
+  },
+  KanbanItem: {
+    board: (kanbanItem) => Board.findById(kanbanItem.board),
   },
 };
 

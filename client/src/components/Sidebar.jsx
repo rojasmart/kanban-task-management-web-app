@@ -4,11 +4,36 @@ import { Link } from "react-router-dom";
 import IconBoard from "../assets/icon-board.svg";
 import "../index.css";
 
+import { gql, useMutation } from "@apollo/client";
+
+const CREATE_BOARD_MUTATION = gql`
+  mutation createBoard($name: String!) {
+    createBoard(name: $name) {
+      id
+      name
+    }
+  }
+`;
+
 function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const { isDarkMode, toggleDarkMode } = useTheme();
 
+  const [createBoard] = useMutation(CREATE_BOARD_MUTATION);
+
   const toggleSidebar = () => setIsOpen(!isOpen);
+
+  const handleCreateBoard = async () => {
+    try {
+      const response = await createBoard({
+        variables: { name: "New Board Name" },
+      });
+      console.log("Board created:", response.data.createBoard);
+      // Optionally, refresh the list of boards or navigate to the new board
+    } catch (error) {
+      console.error("Error creating board:", error);
+    }
+  };
 
   return (
     <>
@@ -56,7 +81,10 @@ function Sidebar() {
               </button>
             </li>
             <li>
-              <button className="flex items-center text-custom-blue font-bold">
+              <button
+                className="flex items-center text-custom-blue font-bold"
+                onClick={handleCreateBoard}
+              >
                 <img src={IconBoard} className="mr-2 " alt="Board Icon" />+
                 Create New Board
               </button>
