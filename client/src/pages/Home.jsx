@@ -1,12 +1,45 @@
+import { useState } from "react";
 import logoDark from "../assets/logo-dark.svg";
 import logoLight from "../assets/logo-light.svg";
 import Sidebar from "../components/Sidebar";
 import ThreeDotMenu from "../components/ThreeDotMenu";
 import { useTheme } from "../../themeContext";
 import { Outlet } from "react-router-dom";
+import { gql, useMutation } from "@apollo/client";
+
+const CREATE_BOARD_MUTATION = gql`
+  mutation createBoard($name: String!) {
+    createBoard(name: $name) {
+      id
+      name
+    }
+  }
+`;
 
 export default function Home() {
   const { isDarkMode } = useTheme();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [boardName, setBoardName] = useState("");
+
+  const [createBoard] = useMutation(CREATE_BOARD_MUTATION);
+
+  const toggleModal = () => setIsModalOpen(!isModalOpen);
+  console.log("boardName", boardName);
+  const handleCreateBoard = async () => {
+    try {
+      const response = await createBoard({
+        variables: { name: boardName }, // Use boardName from state
+      });
+      console.log("Board created:", response.data.createBoard);
+      setIsModalOpen(false); // Close modal after creation
+      setBoardName(""); // Reset board name input
+      // Optionally, refresh the list of boards or navigate to the new board
+    } catch (error) {
+      console.error("Error creating board:", error);
+    }
+  };
+
   return (
     <>
       <header
@@ -42,7 +75,24 @@ export default function Home() {
       </header>
       <div className="container mx-auto">
         <div className="flex flex-wrap justify-center">
-          <Sidebar />
+          <Sidebar toggleModal={toggleModal} />
+          {isModalOpen && (
+            <div className="modal">
+              <div className="modal-content">
+                <span className="close" onClick={toggleModal}>
+                  &times;
+                </span>
+                <h2>Create New Board</h2>
+                <input
+                  type="text"
+                  placeholder="Board Name"
+                  value={boardName}
+                  onChange={(e) => setBoardName(e.target.value)}
+                />
+                <button onClick={handleCreateBoard}>Create</button>
+              </div>
+            </div>
+          )}
           <Outlet />
         </div>
       </div>

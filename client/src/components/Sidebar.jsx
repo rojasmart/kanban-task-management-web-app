@@ -1,39 +1,15 @@
+import PropTypes from "prop-types";
 import { useState } from "react";
 import { useTheme } from "../../themeContext";
 import { Link } from "react-router-dom";
 import IconBoard from "../assets/icon-board.svg";
 import "../index.css";
 
-import { gql, useMutation } from "@apollo/client";
-
-const CREATE_BOARD_MUTATION = gql`
-  mutation createBoard($name: String!) {
-    createBoard(name: $name) {
-      id
-      name
-    }
-  }
-`;
-
-function Sidebar() {
+function Sidebar({ toggleModal }) {
   const [isOpen, setIsOpen] = useState(false);
   const { isDarkMode, toggleDarkMode } = useTheme();
 
-  const [createBoard] = useMutation(CREATE_BOARD_MUTATION);
-
   const toggleSidebar = () => setIsOpen(!isOpen);
-
-  const handleCreateBoard = async () => {
-    try {
-      const response = await createBoard({
-        variables: { name: "New Board Name" },
-      });
-      console.log("Board created:", response.data.createBoard);
-      // Optionally, refresh the list of boards or navigate to the new board
-    } catch (error) {
-      console.error("Error creating board:", error);
-    }
-  };
 
   return (
     <>
@@ -83,7 +59,7 @@ function Sidebar() {
             <li>
               <button
                 className="flex items-center text-custom-blue font-bold"
-                onClick={handleCreateBoard}
+                onClick={toggleModal}
               >
                 <img src={IconBoard} className="mr-2 " alt="Board Icon" />+
                 Create New Board
@@ -113,3 +89,7 @@ function Sidebar() {
 }
 
 export default Sidebar;
+
+Sidebar.propTypes = {
+  toggleModal: PropTypes.func,
+};
