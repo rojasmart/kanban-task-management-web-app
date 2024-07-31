@@ -25,16 +25,20 @@ export default function Home() {
   const [createBoard] = useMutation(CREATE_BOARD_MUTATION);
 
   const toggleModal = () => setIsModalOpen(!isModalOpen);
-  console.log("boardName", boardName);
+
   const handleCreateBoard = async () => {
+    console.log("Board Name before mutation:", boardName); // Add this line
+    if (!boardName) {
+      console.error("Board name is required");
+      return;
+    }
     try {
       const response = await createBoard({
-        variables: { name: boardName }, // Use boardName from state
+        variables: { name: boardName },
       });
       console.log("Board created:", response.data.createBoard);
-      setIsModalOpen(false); // Close modal after creation
-      setBoardName(""); // Reset board name input
-      // Optionally, refresh the list of boards or navigate to the new board
+      setIsModalOpen(false);
+      setBoardName("");
     } catch (error) {
       console.error("Error creating board:", error);
     }

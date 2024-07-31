@@ -50,12 +50,7 @@ function Sidebar({ toggleModal }) {
                 Roadmap
               </Link>
             </li>
-            <li>
-              <button className="hover:bg-custom-blue text-custom-lightgray hover:text-custom-white flex items-center font-bold">
-                <img src={IconBoard} className="mr-2 " alt="Board Icon" />
-                Roadmap
-              </button>
-            </li>
+
             <li>
               <button
                 className="flex items-center text-custom-blue font-bold"

@@ -7,6 +7,16 @@ const boardContent = {
     description: "This is the first board",
     // Add more board-specific properties here
   },
+
+  "marketing-plan": {
+    title: "Board 2",
+    description: "This is the second board",
+    // Add more board-specific properties here
+  },
+  roadmap: {
+    title: "Board 3",
+    description: "This is the third board",
+  },
 };
 
 function BoardPage() {

@@ -68,18 +68,10 @@ const typeDefs = gql`
     token: String
   }
 
-  type KanbanItem {
-    id: ID!
-    title: String!
-    description: String
-    status: String
-    board: Board
-  }
-
   type Board {
     id: ID!
     name: String!
-    items: [KanbanItem]
+    userId: ID!
   }
 
   type Query {
