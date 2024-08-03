@@ -71,7 +71,15 @@ const typeDefs = gql`
   type Board {
     id: ID!
     name: String!
-    userId: ID!
+    userId: [KanbanItem]
+    items: [KanbanItem]
+  }
+
+  type KanbanItem {
+    id: ID!
+    title: String!
+    description: String
+    board: Board
   }
 
   type Query {
