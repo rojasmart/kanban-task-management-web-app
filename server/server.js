@@ -116,6 +116,9 @@ const resolvers = {
     me: (_, __, { user }) => {
       return user;
     },
+    boards: async () => {
+      return await Board.find();
+    },
   },
   Mutation: {
     register: async (_, { email, password }) => {
