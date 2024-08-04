@@ -71,7 +71,6 @@ const typeDefs = gql`
   type Board {
     id: ID!
     name: String!
-    userId: [KanbanItem]
     items: [KanbanItem]
   }
 
@@ -126,6 +125,7 @@ const resolvers = {
       const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
       return { id: user.id, email: user.email, token };
     },
+
     login: async (_, { email, password }) => {
       console.log("Login attempt with email:", email);
       const user = await User.findOne({ email });
@@ -142,10 +142,12 @@ const resolvers = {
       console.log("Generated JWT token:", token);
       return { id: user.id, email: user.email, token };
     },
-    createBoard: (_, { name }) => {
-      const newBoard = new Board({ name });
-      return newBoard.save();
+
+    createBoard: async (_, { name }, { user }) => {
+      const newBoard = new Board({ name, userId: user.userId });
+      return await newBoard.save();
     },
+
     createKanbanItem: (_, { title, description, status, boardId }) => {
       const newKanbanItem = new KanbanItem({
         title,
@@ -180,12 +182,12 @@ const resolvers = {
 const getUser = async (token) => {
   try {
     if (token) {
-      const { userId } = jwt.verify(token, process.env.JWT_SECRET);
-      return await User.findById(userId);
+      return jwt.verify(token, process.env.JWT_SECRET);
     }
-  } catch (e) {
-    console.error("Session expired:", e);
-    throw new Error("Your session expired. Sign in again.");
+    return null;
+  } catch (err) {
+    console.error("Token verification error:", err);
+    return null;
   }
 };
 
@@ -193,9 +195,12 @@ const startServer = async () => {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context: async ({ req }) => {
+    context: ({ req }) => {
       const token = req.headers.authorization || "";
-      const user = await getUser(token);
+      const user = getUser(token);
+      if (!user) {
+        throw new Error("Your session expired. Sign in again.");
+      }
       return { user };
     },
   });
