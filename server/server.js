@@ -71,6 +71,7 @@ const typeDefs = gql`
   type Board {
     id: ID!
     name: String!
+    description: String!
     items: [KanbanItem]
   }
 
@@ -92,7 +93,7 @@ const typeDefs = gql`
   type Mutation {
     login(email: String!, password: String!): User
     register(email: String!, password: String!): User
-    createBoard(name: String!): Board
+    createBoard(name: String!, description: String!): Board
     createKanbanItem(
       title: String!
       description: String

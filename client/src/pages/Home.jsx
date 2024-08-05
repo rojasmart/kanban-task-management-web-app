@@ -12,6 +12,7 @@ const CREATE_BOARD_MUTATION = gql`
     createBoard(name: $name) {
       id
       name
+      description
     }
   }
 `;
@@ -21,6 +22,7 @@ const GET_BOARDS = gql`
     boards {
       id
       name
+      description
     }
   }
 `;
@@ -29,6 +31,7 @@ export default function Home() {
   const { isDarkMode } = useTheme();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [boardName, setBoardName] = useState("");
+  const [description, setDescription] = useState("");
   const [createBoard] = useMutation(CREATE_BOARD_MUTATION);
   const { loading, error, data } = useQuery(GET_BOARDS);
 
@@ -41,7 +44,7 @@ export default function Home() {
     }
     try {
       const response = await createBoard({
-        variables: { name: boardName },
+        variables: { name: boardName, description: description },
       });
       console.log("Board created:", response.data.createBoard);
       setIsModalOpen(false);
@@ -105,6 +108,13 @@ export default function Home() {
                   value={boardName}
                   onChange={(e) => setBoardName(e.target.value)}
                 />
+                <input
+                  type="text"
+                  placeholder="Board Name"
+                  value={boardName}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+
                 <button onClick={handleCreateBoard}>Create</button>
               </div>
             </div>
