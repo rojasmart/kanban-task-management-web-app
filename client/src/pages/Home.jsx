@@ -5,7 +5,7 @@ import Sidebar from "../components/Sidebar";
 import ThreeDotMenu from "../components/ThreeDotMenu";
 import { useTheme } from "../../themeContext";
 import { Outlet } from "react-router-dom";
-import { gql, useMutation } from "@apollo/client";
+import { gql, useQuery, useMutation } from "@apollo/client";
 
 const CREATE_BOARD_MUTATION = gql`
   mutation createBoard($name: String!) {
@@ -16,18 +16,25 @@ const CREATE_BOARD_MUTATION = gql`
   }
 `;
 
+const GET_BOARDS = gql`
+  query GetBoards {
+    boards {
+      id
+      name
+    }
+  }
+`;
+
 export default function Home() {
   const { isDarkMode } = useTheme();
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [boardName, setBoardName] = useState("");
-
   const [createBoard] = useMutation(CREATE_BOARD_MUTATION);
+  const { loading, error, data } = useQuery(GET_BOARDS);
 
   const toggleModal = () => setIsModalOpen(!isModalOpen);
 
   const handleCreateBoard = async () => {
-    console.log("Board Name before mutation:", boardName); // Add this line
     if (!boardName) {
       console.error("Board name is required");
       return;
@@ -43,6 +50,11 @@ export default function Home() {
       console.error("Error creating board:", error);
     }
   };
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+
+  const boards = data.boards;
 
   return (
     <>
@@ -79,7 +91,7 @@ export default function Home() {
       </header>
       <div className="container mx-auto">
         <div className="flex flex-wrap justify-center">
-          <Sidebar toggleModal={toggleModal} />
+          <Sidebar toggleModal={toggleModal} boards={boards} />
           {isModalOpen && (
             <div className="modal">
               <div className="modal-content">

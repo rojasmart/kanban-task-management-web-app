@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import IconBoard from "../assets/icon-board.svg";
 import "../index.css";
 
-function Sidebar({ toggleModal }) {
+function Sidebar({ toggleModal, boards }) {
   const [isOpen, setIsOpen] = useState(false);
   const { isDarkMode, toggleDarkMode } = useTheme();
 
@@ -23,33 +23,17 @@ function Sidebar({ toggleModal }) {
             All Boards
           </p>
           <ul className="list">
-            <li>
-              <Link
-                to="platform-launch"
-                className="hover:bg-custom-blue text-custom-lightgray hover:text-custom-white flex items-center font-bold"
-              >
-                <img src={IconBoard} className="mr-2 " alt="Board Icon" />
-                Platform Launch
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="marketing-plan"
-                className="hover:bg-custom-blue text-custom-lightgray hover:text-custom-white flex items-center font-bold "
-              >
-                <img src={IconBoard} className="mr-2 " alt="Board Icon" />
-                Marketing Plan
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="roadmap"
-                className="hover:bg-custom-blue text-custom-lightgray hover:text-custom-white flex items-center font-bold"
-              >
-                <img src={IconBoard} className="mr-2 " alt="Board Icon" />
-                Roadmap
-              </Link>
-            </li>
+            {boards.map((board) => (
+              <li key={board.id}>
+                <Link
+                  to={board.path}
+                  className="hover:bg-custom-blue text-custom-lightgray hover:text-custom-white flex items-center font-bold"
+                >
+                  <img src={IconBoard} className="mr-2" alt="Board Icon" />
+                  {board.name}
+                </Link>
+              </li>
+            ))}
 
             <li>
               <button
@@ -87,4 +71,5 @@ export default Sidebar;
 
 Sidebar.propTypes = {
   toggleModal: PropTypes.func,
+  boards: PropTypes.array,
 };
