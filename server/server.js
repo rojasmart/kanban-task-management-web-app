@@ -93,7 +93,7 @@ const typeDefs = gql`
   type Mutation {
     login(email: String!, password: String!): User
     register(email: String!, password: String!): User
-    createBoard(name: String!, description: String!): Board
+    createBoard(name: String!, description: String!): Board!
     createKanbanItem(
       title: String!
       description: String
@@ -147,8 +147,8 @@ const resolvers = {
       return { id: user.id, email: user.email, token };
     },
 
-    createBoard: async (_, { name }, { user }) => {
-      const newBoard = new Board({ name, userId: user.userId });
+    createBoard: async (_, { name, description }, { user }) => {
+      const newBoard = new Board({ name, description, userId: user.userId });
       return await newBoard.save();
     },
 

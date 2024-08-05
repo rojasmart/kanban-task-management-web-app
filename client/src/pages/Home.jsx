@@ -8,8 +8,8 @@ import { Outlet } from "react-router-dom";
 import { gql, useQuery, useMutation } from "@apollo/client";
 
 const CREATE_BOARD_MUTATION = gql`
-  mutation createBoard($name: String!) {
-    createBoard(name: $name) {
+  mutation createBoard($name: String!, $description: String!) {
+    createBoard(name: $name, description: $description) {
       id
       name
       description
@@ -110,8 +110,8 @@ export default function Home() {
                 />
                 <input
                   type="text"
-                  placeholder="Board Name"
-                  value={boardName}
+                  placeholder="descrição"
+                  value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
 
