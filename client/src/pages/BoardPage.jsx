@@ -11,7 +11,7 @@ function BoardPage() {
   return (
     <div>
       <h2>{board.name}</h2>
-      <p>pff</p>
+      <p>{board.description}</p>
     </div>
   );
 }

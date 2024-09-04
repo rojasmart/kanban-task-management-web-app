@@ -67,9 +67,9 @@ function Sidebar({ toggleModal, boards }) {
   );
 }
 
-export default Sidebar;
-
 Sidebar.propTypes = {
   toggleModal: PropTypes.func,
   boards: PropTypes.array,
 };
+
+export default Sidebar;

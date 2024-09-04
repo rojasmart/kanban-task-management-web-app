@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import logoDark from "../assets/logo-dark.svg";
 import logoLight from "../assets/logo-light.svg";
 import Sidebar from "../components/Sidebar";
@@ -33,7 +33,14 @@ export default function Home() {
   const [boardName, setBoardName] = useState("");
   const [description, setDescription] = useState("");
   const [createBoard] = useMutation(CREATE_BOARD_MUTATION);
-  const { loading, error, data } = useQuery(GET_BOARDS);
+  const { loading, error, data, refetch } = useQuery(GET_BOARDS);
+  const [boards, setBoards] = useState([]);
+
+  useEffect(() => {
+    if (data) {
+      setBoards(data.boards);
+    }
+  }, [data]);
 
   const toggleModal = () => setIsModalOpen(!isModalOpen);
 
@@ -47,8 +54,10 @@ export default function Home() {
         variables: { name: boardName, description: description },
       });
       console.log("Board created:", response.data.createBoard);
+      setBoards([...boards, response.data.createBoard]);
       setIsModalOpen(false);
       setBoardName("");
+      setDescription("");
     } catch (error) {
       console.error("Error creating board:", error);
     }
@@ -56,8 +65,6 @@ export default function Home() {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
-
-  const boards = data.boards;
 
   return (
     <>
@@ -74,7 +81,6 @@ export default function Home() {
               className="h-8"
             />
           </div>
-
           <div className="menu-wrapper flex items-center gap-5 justify-between w-[100%]">
             <p
               className={`font-bold text-2xl ${
@@ -108,13 +114,6 @@ export default function Home() {
                   value={boardName}
                   onChange={(e) => setBoardName(e.target.value)}
                 />
-                <input
-                  type="text"
-                  placeholder="descrição"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-
                 <button onClick={handleCreateBoard}>Create</button>
               </div>
             </div>

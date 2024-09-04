@@ -71,7 +71,7 @@ const typeDefs = gql`
   type Board {
     id: ID!
     name: String!
-    description: String!
+    description: String #
     items: [KanbanItem]
   }
 
@@ -93,7 +93,7 @@ const typeDefs = gql`
   type Mutation {
     login(email: String!, password: String!): User
     register(email: String!, password: String!): User
-    createBoard(name: String!, description: String!): Board!
+    createBoard(name: String!, description: String!): Board
     createKanbanItem(
       title: String!
       description: String
@@ -118,7 +118,17 @@ const resolvers = {
       return user;
     },
     boards: async () => {
-      return await Board.find();
+      const boards = await Board.find();
+      return boards.map((board) => {
+        if (!board.description) {
+          // Option 1: Provide a default value
+          board.description || "";
+
+          // Option 2: Throw an error
+          // throw new Error('Cannot return null for non-nullable field Board.description.');
+        }
+        return board;
+      });
     },
   },
   Mutation: {
@@ -148,6 +158,14 @@ const resolvers = {
     },
 
     createBoard: async (_, { name, description }, { user }) => {
+      if (!description) {
+        // Option 1: Provide a default value
+        description = "Default description";
+
+        // Option 2: Throw an error
+        // throw new Error('Description is required and cannot be null.');
+      }
+
       const newBoard = new Board({ name, description, userId: user.userId });
       return await newBoard.save();
     },
