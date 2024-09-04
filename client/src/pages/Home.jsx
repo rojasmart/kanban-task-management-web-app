@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import logoDark from "../assets/logo-dark.svg";
 import logoLight from "../assets/logo-light.svg";
 import Sidebar from "../components/Sidebar";
@@ -33,15 +33,7 @@ export default function Home() {
   const [boardName, setBoardName] = useState("");
   const [description, setDescription] = useState("");
   const [createBoard] = useMutation(CREATE_BOARD_MUTATION);
-  const { loading, error, data, refetch } = useQuery(GET_BOARDS);
-  const [boards, setBoards] = useState([]);
-
-  useEffect(() => {
-    if (data) {
-      setBoards(data.boards);
-    }
-  }, [data]);
-
+  const { loading, error, data, refetch } = useQuery(GET_BOARDS); // Adicione refetch aqui
   const toggleModal = () => setIsModalOpen(!isModalOpen);
 
   const handleCreateBoard = async () => {
@@ -54,10 +46,10 @@ export default function Home() {
         variables: { name: boardName, description: description },
       });
       console.log("Board created:", response.data.createBoard);
-      setBoards([...boards, response.data.createBoard]);
       setIsModalOpen(false);
       setBoardName("");
       setDescription("");
+      refetch(); // Chame refetch após a criação do board
     } catch (error) {
       console.error("Error creating board:", error);
     }
@@ -65,6 +57,7 @@ export default function Home() {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
+  const boards = data.boards;
 
   return (
     <>
