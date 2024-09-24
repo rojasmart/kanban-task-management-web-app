@@ -23,6 +23,28 @@ const userSchema = new mongoose.Schema({
   password: String,
 });
 
+//Column Schema
+const columnSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  tasks: [
+    {
+      title: {
+        type: String,
+        required: true,
+      },
+      description: String,
+    },
+  ],
+  board: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Board",
+    required: true,
+  },
+});
+
 // Schema for Kanban Items
 const kanbanItemSchema = new mongoose.Schema({
   title: {
@@ -48,6 +70,13 @@ const boardSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  description: String,
+  columns: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Column",
+    },
+  ],
   items: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -204,7 +233,7 @@ const resolvers = {
         newBoard.columns.push(newColumn._id);
       }
       await newBoard.save();
-      return newBoard;
+      return newBoard.populate("columns");
     },
 
     createKanbanItem: (_, { title, description, status, boardId }) => {

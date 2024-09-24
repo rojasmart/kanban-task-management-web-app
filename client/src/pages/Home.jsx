@@ -36,6 +36,15 @@ const GET_BOARDS = gql`
       id
       name
       description
+      columns {
+        id
+        name
+        tasks {
+          id
+          title
+          description
+        }
+      }
     }
   }
 `;
