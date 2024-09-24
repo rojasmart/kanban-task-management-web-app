@@ -86,6 +86,7 @@ const boardSchema = new mongoose.Schema({
 });
 
 const User = mongoose.model("User", userSchema);
+const Column = mongoose.model("Column", columnSchema);
 const KanbanItem = mongoose.model("KanbanItem", kanbanItemSchema);
 const Board = mongoose.model("Board", boardSchema);
 
@@ -113,7 +114,7 @@ const typeDefs = gql`
 
   type Task {
     id: ID!
-    title: String!
+    title: String
     description: String
   }
 
@@ -176,17 +177,19 @@ const resolvers = {
       return user;
     },
     boards: async () => {
-      const boards = await Board.find();
-      return boards.map((board) => {
-        if (!board.description) {
-          // Option 1: Provide a default value
-          board.description || "";
-
-          // Option 2: Throw an error
-          // throw new Error('Cannot return null for non-nullable field Board.description.');
-        }
-        return board;
-      });
+      const boards = await Board.find().populate("columns");
+      return boards.map((board) => ({
+        ...board.toObject(),
+        id: board._id.toString(),
+        columns: board.columns.map((column) => ({
+          ...column.toObject(),
+          id: column._id.toString(),
+          tasks: column.tasks.map((task) => ({
+            ...task,
+            id: task._id.toString(),
+          })),
+        })),
+      }));
     },
   },
   Mutation: {
@@ -217,11 +220,7 @@ const resolvers = {
 
     createBoard: async (_, { name, description, columns }, { user }) => {
       if (!description) {
-        // Option 1: Provide a default value
         description = "Default description";
-
-        // Option 2: Throw an error
-        // throw new Error('Description is required and cannot be null.');
       }
 
       const newBoard = new Board({ name, description, userId: user.userId });
@@ -233,7 +232,21 @@ const resolvers = {
         newBoard.columns.push(newColumn._id);
       }
       await newBoard.save();
-      return newBoard.populate("columns");
+      const populatedBoard = await Board.findById(newBoard._id)
+        .populate("columns")
+        .exec();
+      return {
+        ...populatedBoard.toObject(),
+        id: populatedBoard._id.toString(),
+        columns: populatedBoard.columns.map((column) => ({
+          ...column.toObject(),
+          id: column._id.toString(),
+          tasks: column.tasks.map((task) => ({
+            ...task,
+            id: task._id.toString(),
+          })),
+        })),
+      };
     },
 
     createKanbanItem: (_, { title, description, status, boardId }) => {
@@ -243,27 +256,49 @@ const resolvers = {
         status,
         board: boardId,
       });
-      return newKanbanItem.save();
+      return newKanbanItem.save().then((item) => ({
+        ...item.toObject(),
+        id: item._id.toString(),
+      }));
     },
     updateKanbanItem: (_, { id, title, description, status }) => {
       return KanbanItem.findByIdAndUpdate(
         id,
         { title, description, status },
         { new: true }
-      );
+      ).then((item) => ({
+        ...item.toObject(),
+        id: item._id.toString(),
+      }));
     },
     deleteBoard: (_, { id }) => {
-      return Board.findByIdAndRemove(id);
+      return Board.findByIdAndRemove(id).then((board) => ({
+        ...board.toObject(),
+        id: board._id.toString(),
+      }));
     },
     deleteKanbanItem: (_, { id }) => {
-      return KanbanItem.findByIdAndRemove(id);
+      return KanbanItem.findByIdAndRemove(id).then((item) => ({
+        ...item.toObject(),
+        id: item._id.toString(),
+      }));
     },
   },
   Board: {
-    items: (board) => KanbanItem.find({ board: board.id }),
+    items: (board) =>
+      KanbanItem.find({ board: board.id }).then((items) =>
+        items.map((item) => ({
+          ...item.toObject(),
+          id: item._id.toString(),
+        }))
+      ),
   },
   KanbanItem: {
-    board: (kanbanItem) => Board.findById(kanbanItem.board),
+    board: (kanbanItem) =>
+      Board.findById(kanbanItem.board).then((board) => ({
+        ...board.toObject(),
+        id: board._id.toString(),
+      })),
   },
 };
 
