@@ -71,8 +71,31 @@ const typeDefs = gql`
   type Board {
     id: ID!
     name: String!
-    description: String #
-    items: [KanbanItem]
+    description: String
+    columns: [Column!]!
+    items: [KanbanItem!]! # Add the items field here
+  }
+
+  type Column {
+    id: ID!
+    name: String!
+    tasks: [Task!]!
+  }
+
+  type Task {
+    id: ID!
+    title: String!
+    description: String
+  }
+
+  input TaskInput {
+    title: String!
+    description: String
+  }
+
+  input ColumnInput {
+    name: String!
+    tasks: [TaskInput!]!
   }
 
   type KanbanItem {
@@ -93,7 +116,13 @@ const typeDefs = gql`
   type Mutation {
     login(email: String!, password: String!): User
     register(email: String!, password: String!): User
-    createBoard(name: String!, description: String!): Board
+
+    createBoard(
+      name: String!
+      description: String
+      columns: [ColumnInput!]!
+    ): Board
+
     createKanbanItem(
       title: String!
       description: String
@@ -157,7 +186,7 @@ const resolvers = {
       return { id: user.id, email: user.email, token };
     },
 
-    createBoard: async (_, { name, description }, { user }) => {
+    createBoard: async (_, { name, description, columns }, { user }) => {
       if (!description) {
         // Option 1: Provide a default value
         description = "Default description";
@@ -167,7 +196,15 @@ const resolvers = {
       }
 
       const newBoard = new Board({ name, description, userId: user.userId });
-      return await newBoard.save();
+      await newBoard.save();
+      // Create initial columns
+      for (const column of columns) {
+        const newColumn = new Column({ ...column, board: newBoard._id });
+        await newColumn.save();
+        newBoard.columns.push(newColumn._id);
+      }
+      await newBoard.save();
+      return newBoard;
     },
 
     createKanbanItem: (_, { title, description, status, boardId }) => {

@@ -8,11 +8,24 @@ import { Outlet } from "react-router-dom";
 import { gql, useQuery, useMutation } from "@apollo/client";
 
 const CREATE_BOARD_MUTATION = gql`
-  mutation createBoard($name: String!, $description: String!) {
-    createBoard(name: $name, description: $description) {
+  mutation createBoard(
+    $name: String!
+    $description: String!
+    $columns: [ColumnInput!]!
+  ) {
+    createBoard(name: $name, description: $description, columns: $columns) {
       id
       name
       description
+      columns {
+        id
+        name
+        tasks {
+          id
+          title
+          description
+        }
+      }
     }
   }
 `;
@@ -42,8 +55,24 @@ export default function Home() {
       return;
     }
     try {
+      const initialColumns = [
+        {
+          name: "To Do",
+          tasks: [
+            {
+              title: "Initial Task",
+              description: "This is an initial task in the To Do column.",
+            },
+          ],
+        },
+      ];
+
       const response = await createBoard({
-        variables: { name: boardName, description: description },
+        variables: {
+          name: boardName,
+          description: description,
+          columns: initialColumns,
+        },
       });
       console.log("Board created:", response.data.createBoard);
       setIsModalOpen(false);
