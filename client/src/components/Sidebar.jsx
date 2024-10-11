@@ -1,11 +1,10 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { useTheme } from "../../themeContext";
-import { Link } from "react-router-dom";
 import IconBoard from "../assets/icon-board.svg";
 import "../index.css";
 
-function Sidebar({ toggleModal, boards }) {
+function Sidebar({ toggleModal, boards, onSelectBoard }) {
   const [isOpen, setIsOpen] = useState(false);
   const { isDarkMode, toggleDarkMode } = useTheme();
 
@@ -25,13 +24,13 @@ function Sidebar({ toggleModal, boards }) {
           <ul className="list">
             {boards.map((board) => (
               <li key={board.id}>
-                <Link
-                  to={board.path}
+                <button
+                  onClick={() => onSelectBoard(board)} // Chame a função de callback ao clicar
                   className="hover:bg-custom-blue text-custom-lightgray hover:text-custom-white flex items-center font-bold"
                 >
                   <img src={IconBoard} className="mr-2" alt="Board Icon" />
                   {board.name}
-                </Link>
+                </button>
               </li>
             ))}
 
@@ -47,7 +46,6 @@ function Sidebar({ toggleModal, boards }) {
           </ul>
         </div>
 
-        {/* Buttons moved inside the sidebar */}
         <div>
           <button
             className={`bg-custom-blue mt-4 text-custom-white rounded-full p-3 pl-6 pr-6 theme-btn`}
@@ -70,6 +68,7 @@ function Sidebar({ toggleModal, boards }) {
 Sidebar.propTypes = {
   toggleModal: PropTypes.func,
   boards: PropTypes.array,
+  onSelectBoard: PropTypes.func.isRequired, // Adicione a prop de callback
 };
 
 export default Sidebar;

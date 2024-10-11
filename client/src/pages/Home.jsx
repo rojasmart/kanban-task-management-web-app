@@ -4,8 +4,8 @@ import logoLight from "../assets/logo-light.svg";
 import Sidebar from "../components/Sidebar";
 import ThreeDotMenu from "../components/ThreeDotMenu";
 import { useTheme } from "../../themeContext";
-import { Outlet } from "react-router-dom";
 import { gql, useQuery, useMutation } from "@apollo/client";
+import BoardPage from "./BoardPage";
 
 const CREATE_BOARD_MUTATION = gql`
   mutation createBoard(
@@ -54,6 +54,7 @@ export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [boardName, setBoardName] = useState("");
   const [description, setDescription] = useState("");
+  const [selectedBoard, setSelectedBoard] = useState(null); // Estado para o board selecionado
   const [createBoard] = useMutation(CREATE_BOARD_MUTATION);
   const { loading, error, data, refetch } = useQuery(GET_BOARDS); // Adicione refetch aqui
   const toggleModal = () => setIsModalOpen(!isModalOpen);
@@ -131,7 +132,11 @@ export default function Home() {
       </header>
       <div className="container mx-auto">
         <div className="flex flex-wrap justify-center">
-          <Sidebar toggleModal={toggleModal} boards={boards} />
+          <Sidebar
+            toggleModal={toggleModal}
+            boards={boards}
+            onSelectBoard={setSelectedBoard}
+          />
           {isModalOpen && (
             <div className="modal">
               <div className="modal-content">
@@ -149,7 +154,7 @@ export default function Home() {
               </div>
             </div>
           )}
-          <Outlet />
+          {selectedBoard && <BoardPage board={selectedBoard} />}
         </div>
       </div>
     </>

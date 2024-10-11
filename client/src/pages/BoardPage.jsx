@@ -1,17 +1,13 @@
-import { useParams, useOutletContext } from "react-router-dom";
+import Board from "./Board";
 
-function BoardPage() {
-  let { boardId } = useParams();
-  const { boards } = useOutletContext();
-
-  const board = boards.find((b) => b.id === boardId);
-
+function BoardPage({ board }) {
   if (!board) return <p>Board not found</p>;
 
   return (
     <div>
       <h2>{board.name}</h2>
       <p>{board.description}</p>
+      <Board board={board} />
     </div>
   );
 }
