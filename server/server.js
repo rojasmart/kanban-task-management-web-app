@@ -73,18 +73,22 @@ const boardSchema = new mongoose.Schema({
   description: String,
   columns: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Column",
-    },
-  ],
-  items: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "KanbanItem",
+      name: {
+        type: String,
+        required: true,
+      },
+      tasks: [
+        {
+          title: {
+            type: String,
+            required: true,
+          },
+          description: String,
+        },
+      ],
     },
   ],
 });
-
 const User = mongoose.model("User", userSchema);
 const Column = mongoose.model("Column", columnSchema);
 const KanbanItem = mongoose.model("KanbanItem", kanbanItemSchema);
@@ -103,18 +107,15 @@ const typeDefs = gql`
     name: String!
     description: String
     columns: [Column!]!
-    items: [KanbanItem!]! # Add the items field here
   }
 
   type Column {
-    id: ID!
-    name: String!
+    name: String
     tasks: [Task!]!
   }
 
   type Task {
-    id: ID!
-    title: String
+    title: String!
     description: String
   }
 
@@ -128,19 +129,10 @@ const typeDefs = gql`
     tasks: [TaskInput!]!
   }
 
-  type KanbanItem {
-    id: ID!
-    title: String!
-    description: String
-    board: Board
-  }
-
   type Query {
     me: User
     boards: [Board]
     board(id: ID!): Board
-    kanbanItems: [KanbanItem]
-    kanbanItem(id: ID!): KanbanItem
   }
 
   type Mutation {
@@ -153,20 +145,7 @@ const typeDefs = gql`
       columns: [ColumnInput!]!
     ): Board
 
-    createKanbanItem(
-      title: String!
-      description: String
-      status: String
-      boardId: ID!
-    ): KanbanItem
-    updateKanbanItem(
-      id: ID!
-      title: String
-      description: String
-      status: String
-    ): KanbanItem
-    deleteBoard(id: ID!): Board
-    deleteKanbanItem(id: ID!): KanbanItem
+    addTaskToColumn(boardId: ID!, columnName: String!, task: TaskInput!): Board
   }
 `;
 
@@ -177,19 +156,10 @@ const resolvers = {
       return user;
     },
     boards: async () => {
-      const boards = await Board.find().populate("columns");
-      return boards.map((board) => ({
-        ...board.toObject(),
-        id: board._id.toString(),
-        columns: board.columns.map((column) => ({
-          ...column.toObject(),
-          id: column._id.toString(),
-          tasks: column.tasks.map((task) => ({
-            ...task,
-            id: task._id.toString(),
-          })),
-        })),
-      }));
+      return Board.find();
+    },
+    board: async (_, { id }) => {
+      return Board.findById(id);
     },
   },
   Mutation: {
@@ -202,103 +172,42 @@ const resolvers = {
     },
 
     login: async (_, { email, password }) => {
-      console.log("Login attempt with email:", email);
       const user = await User.findOne({ email });
       if (!user) {
-        console.error("User not found");
         throw new Error("User not found");
       }
       const valid = await bcrypt.compare(password, user.password);
       if (!valid) {
-        console.error("Incorrect password");
         throw new Error("Incorrect password");
       }
       const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
-      console.log("Generated JWT token:", token);
       return { id: user.id, email: user.email, token };
     },
 
-    createBoard: async (_, { name, description, columns }, { user }) => {
-      if (!description) {
-        description = "Default description";
-      }
-
-      const newBoard = new Board({ name, description, userId: user.userId });
-      await newBoard.save();
-      // Create initial columns
-      for (const column of columns) {
-        const newColumn = new Column({ ...column, board: newBoard._id });
-        await newColumn.save();
-        newBoard.columns.push(newColumn._id);
-      }
-      await newBoard.save();
-      const populatedBoard = await Board.findById(newBoard._id)
-        .populate("columns")
-        .exec();
-      return {
-        ...populatedBoard.toObject(),
-        id: populatedBoard._id.toString(),
-        columns: populatedBoard.columns.map((column) => ({
-          ...column.toObject(),
-          id: column._id.toString(),
-          tasks: column.tasks.map((task) => ({
-            ...task,
-            id: task._id.toString(),
-          })),
-        })),
-      };
-    },
-
-    createKanbanItem: (_, { title, description, status, boardId }) => {
-      const newKanbanItem = new KanbanItem({
-        title,
-        description,
-        status,
-        board: boardId,
+    createBoard: async (_, { name, description, columns }) => {
+      // Ensure columns have valid names
+      const validColumns = columns.map((column) => {
+        if (!column.name) {
+          throw new Error("Column name is required");
+        }
+        return column;
       });
-      return newKanbanItem.save().then((item) => ({
-        ...item.toObject(),
-        id: item._id.toString(),
-      }));
+
+      const newBoard = new Board({ name, description, columns: validColumns });
+      await newBoard.save();
+      return newBoard;
     },
-    updateKanbanItem: (_, { id, title, description, status }) => {
-      return KanbanItem.findByIdAndUpdate(
-        id,
-        { title, description, status },
-        { new: true }
-      ).then((item) => ({
-        ...item.toObject(),
-        id: item._id.toString(),
-      }));
+
+    addTaskToColumn: async (_, { boardId, columnName, task }) => {
+      const board = await Board.findById(boardId);
+      const column = board.columns.find((col) => col.name === columnName);
+      if (!column) {
+        throw new Error("Column not found");
+      }
+      column.tasks.push(task);
+      await board.save();
+      return board;
     },
-    deleteBoard: (_, { id }) => {
-      return Board.findByIdAndRemove(id).then((board) => ({
-        ...board.toObject(),
-        id: board._id.toString(),
-      }));
-    },
-    deleteKanbanItem: (_, { id }) => {
-      return KanbanItem.findByIdAndRemove(id).then((item) => ({
-        ...item.toObject(),
-        id: item._id.toString(),
-      }));
-    },
-  },
-  Board: {
-    items: (board) =>
-      KanbanItem.find({ board: board.id }).then((items) =>
-        items.map((item) => ({
-          ...item.toObject(),
-          id: item._id.toString(),
-        }))
-      ),
-  },
-  KanbanItem: {
-    board: (kanbanItem) =>
-      Board.findById(kanbanItem.board).then((board) => ({
-        ...board.toObject(),
-        id: board._id.toString(),
-      })),
   },
 };
 

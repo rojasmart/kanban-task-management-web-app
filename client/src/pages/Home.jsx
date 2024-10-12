@@ -18,10 +18,29 @@ const CREATE_BOARD_MUTATION = gql`
       name
       description
       columns {
-        id
         name
         tasks {
-          id
+          title
+          description
+        }
+      }
+    }
+  }
+`;
+
+const ADD_TASK_TO_COLUMN_MUTATION = gql`
+  mutation addTaskToColumn(
+    $boardId: ID!
+    $columnName: String!
+    $task: TaskInput!
+  ) {
+    addTaskToColumn(boardId: $boardId, columnName: $columnName, task: $task) {
+      id
+      name
+      description
+      columns {
+        name
+        tasks {
           title
           description
         }
@@ -37,10 +56,8 @@ const GET_BOARDS = gql`
       name
       description
       columns {
-        id
         name
         tasks {
-          id
           title
           description
         }
@@ -52,16 +69,17 @@ const GET_BOARDS = gql`
 export default function Home() {
   const { isDarkMode } = useTheme();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false); // New state for task modal
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [boardName, setBoardName] = useState("");
   const [description, setDescription] = useState("");
-  const [selectedBoard, setSelectedBoard] = useState(null); // Estado para o board selecionado
-  const [newTaskTitle, setNewTaskTitle] = useState(""); // Estado para o título da nova tarefa
-  const [newTaskDescription, setNewTaskDescription] = useState(""); // Estado para a descrição da nova tarefa
+  const [selectedBoard, setSelectedBoard] = useState(null);
+  const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [newTaskDescription, setNewTaskDescription] = useState("");
   const [createBoard] = useMutation(CREATE_BOARD_MUTATION);
-  const { loading, error, data, refetch } = useQuery(GET_BOARDS); // Adicione refetch aqui
+  const [addTaskToColumn] = useMutation(ADD_TASK_TO_COLUMN_MUTATION);
+  const { loading, error, data, refetch } = useQuery(GET_BOARDS);
   const toggleModal = () => setIsModalOpen(!isModalOpen);
-  const toggleTaskModal = () => setIsTaskModalOpen(!isTaskModalOpen); // New function to toggle task modal
+  const toggleTaskModal = () => setIsTaskModalOpen(!isTaskModalOpen);
 
   const handleCreateBoard = async () => {
     if (!boardName) {
@@ -71,13 +89,8 @@ export default function Home() {
     try {
       const initialColumns = [
         {
-          name: "To Do",
-          tasks: [
-            {
-              title: "Initial Task",
-              description: "This is an initial task in the To Do column.",
-            },
-          ],
+          name: "To Do", // Ensure column name is set
+          tasks: [],
         },
       ];
 
@@ -92,42 +105,37 @@ export default function Home() {
       setIsModalOpen(false);
       setBoardName("");
       setDescription("");
-      refetch(); // Chame refetch após a criação do board
+      refetch();
     } catch (error) {
       console.error("Error creating board:", error);
     }
   };
 
-  const handleAddTask = () => {
+  const handleAddTask = async () => {
     if (!newTaskTitle || !newTaskDescription || !selectedBoard) {
       console.error("Task title, description, and selected board are required");
       return;
     }
 
-    const updatedBoard = {
-      ...selectedBoard,
-      columns: selectedBoard.columns.map((column) => {
-        if (column.name === "To Do") {
-          return {
-            ...column,
-            tasks: [
-              ...column.tasks,
-              {
-                id: Date.now().toString(),
-                title: newTaskTitle,
-                description: newTaskDescription,
-              },
-            ],
-          };
-        }
-        return column;
-      }),
-    };
-
-    setSelectedBoard(updatedBoard);
-    setNewTaskTitle("");
-    setNewTaskDescription("");
-    setIsTaskModalOpen(false); // Close the task modal after adding the task
+    try {
+      const response = await addTaskToColumn({
+        variables: {
+          boardId: selectedBoard.id,
+          columnName: "To Do",
+          task: {
+            title: newTaskTitle,
+            description: newTaskDescription,
+          },
+        },
+      });
+      console.log("Task added:", response.data.addTaskToColumn);
+      setNewTaskTitle("");
+      setNewTaskDescription("");
+      setIsTaskModalOpen(false);
+      refetch();
+    } catch (error) {
+      console.error("Error adding task:", error);
+    }
   };
 
   if (loading) return <p>Loading...</p>;
@@ -160,7 +168,7 @@ export default function Home() {
             <div className="nav-links flex items-center gap-4">
               <button
                 className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6"
-                onClick={toggleTaskModal} // Open task modal
+                onClick={toggleTaskModal}
               >
                 Add new task
               </button>
@@ -200,7 +208,7 @@ export default function Home() {
                   onChange={(e) => setDescription(e.target.value)}
                 />
                 <button
-                  className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6  "
+                  className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6"
                   onClick={handleCreateBoard}
                 >
                   Create
@@ -222,13 +230,13 @@ export default function Home() {
                 <input
                   type="text"
                   className="w-full p-2 border border-gray-300 rounded mb-4"
-                  placeholder="Title"
+                  placeholder="Task Title"
                   value={newTaskTitle}
                   onChange={(e) => setNewTaskTitle(e.target.value)}
                 />
                 <textarea
                   className="w-full p-2 border border-gray-300 rounded mb-4"
-                  placeholder="Description"
+                  placeholder="Task Description"
                   value={newTaskDescription}
                   onChange={(e) => setNewTaskDescription(e.target.value)}
                 />
@@ -236,12 +244,11 @@ export default function Home() {
                   className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6"
                   onClick={handleAddTask}
                 >
-                  Create Task
+                  Add Task
                 </button>
               </div>
             </div>
           )}
-
           {selectedBoard && <BoardPage board={selectedBoard} />}
         </div>
       </div>
