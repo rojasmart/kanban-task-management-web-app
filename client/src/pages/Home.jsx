@@ -52,12 +52,16 @@ const GET_BOARDS = gql`
 export default function Home() {
   const { isDarkMode } = useTheme();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false); // New state for task modal
   const [boardName, setBoardName] = useState("");
   const [description, setDescription] = useState("");
   const [selectedBoard, setSelectedBoard] = useState(null); // Estado para o board selecionado
+  const [newTaskTitle, setNewTaskTitle] = useState(""); // Estado para o título da nova tarefa
+  const [newTaskDescription, setNewTaskDescription] = useState(""); // Estado para a descrição da nova tarefa
   const [createBoard] = useMutation(CREATE_BOARD_MUTATION);
   const { loading, error, data, refetch } = useQuery(GET_BOARDS); // Adicione refetch aqui
   const toggleModal = () => setIsModalOpen(!isModalOpen);
+  const toggleTaskModal = () => setIsTaskModalOpen(!isTaskModalOpen); // New function to toggle task modal
 
   const handleCreateBoard = async () => {
     if (!boardName) {
@@ -94,6 +98,38 @@ export default function Home() {
     }
   };
 
+  const handleAddTask = () => {
+    if (!newTaskTitle || !newTaskDescription || !selectedBoard) {
+      console.error("Task title, description, and selected board are required");
+      return;
+    }
+
+    const updatedBoard = {
+      ...selectedBoard,
+      columns: selectedBoard.columns.map((column) => {
+        if (column.name === "To Do") {
+          return {
+            ...column,
+            tasks: [
+              ...column.tasks,
+              {
+                id: Date.now().toString(),
+                title: newTaskTitle,
+                description: newTaskDescription,
+              },
+            ],
+          };
+        }
+        return column;
+      }),
+    };
+
+    setSelectedBoard(updatedBoard);
+    setNewTaskTitle("");
+    setNewTaskDescription("");
+    setIsTaskModalOpen(false); // Close the task modal after adding the task
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
   const boards = data.boards;
@@ -122,7 +158,10 @@ export default function Home() {
               Platform Launch
             </p>
             <div className="nav-links flex items-center gap-4">
-              <button className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6">
+              <button
+                className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6"
+                onClick={toggleTaskModal} // Open task modal
+              >
                 Add new task
               </button>
               <ThreeDotMenu />
@@ -151,6 +190,28 @@ export default function Home() {
                   onChange={(e) => setBoardName(e.target.value)}
                 />
                 <button onClick={handleCreateBoard}>Create</button>
+              </div>
+            </div>
+          )}
+          {isTaskModalOpen && (
+            <div className="modal">
+              <div className="modal-content">
+                <span className="close" onClick={toggleTaskModal}>
+                  &times;
+                </span>
+                <h2>Add New Task</h2>
+                <input
+                  type="text"
+                  placeholder="Task Title"
+                  value={newTaskTitle}
+                  onChange={(e) => setNewTaskTitle(e.target.value)}
+                />
+                <textarea
+                  placeholder="Task Description"
+                  value={newTaskDescription}
+                  onChange={(e) => setNewTaskDescription(e.target.value)}
+                />
+                <button onClick={handleAddTask}>Add Task</button>
               </div>
             </div>
           )}
