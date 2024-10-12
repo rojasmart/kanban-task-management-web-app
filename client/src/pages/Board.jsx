@@ -10,8 +10,11 @@ const Board = ({ board }) => {
             <h3>{column.name}</h3>
             <div className="tasks">
               {column.tasks.map((task, taskIndex) => (
-                <div key={taskIndex} className="task">
-                  <h4>{task.title}</h4>
+                <div
+                  key={taskIndex}
+                  className="bg-custom-white task-card bg-white shadow-md rounded-lg p-4 mb-4"
+                >
+                  <h4 className="font-bold">{task.title}</h4>
                   <p>{task.description}</p>
                 </div>
               ))}
