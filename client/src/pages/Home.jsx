@@ -128,11 +128,33 @@ export default function Home() {
           },
         },
       });
+
       console.log("Task added:", response.data.addTaskToColumn);
+
+      // Atualize o estado do selectedBoard diretamente
+      const updatedBoard = {
+        ...selectedBoard,
+        columns: selectedBoard.columns.map((column) => {
+          if (column.name === "To Do") {
+            return {
+              ...column,
+              tasks: [
+                ...column.tasks,
+                {
+                  title: newTaskTitle,
+                  description: newTaskDescription,
+                },
+              ],
+            };
+          }
+          return column;
+        }),
+      };
+
+      setSelectedBoard(updatedBoard);
       setNewTaskTitle("");
       setNewTaskDescription("");
       setIsTaskModalOpen(false);
-      refetch();
     } catch (error) {
       console.error("Error adding task:", error);
     }
