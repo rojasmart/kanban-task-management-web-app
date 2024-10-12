@@ -177,25 +177,8 @@ export default function Home() {
             onSelectBoard={setSelectedBoard}
           />
           {isModalOpen && (
-            <div className="modal">
-              <div className="modal-content">
-                <span className="close" onClick={toggleModal}>
-                  &times;
-                </span>
-                <h2>Create New Board</h2>
-                <input
-                  type="text"
-                  placeholder="Board Name"
-                  value={boardName}
-                  onChange={(e) => setBoardName(e.target.value)}
-                />
-                <button onClick={handleCreateBoard}>Create</button>
-              </div>
-            </div>
-          )}
-          {isModalOpen && (
             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-lg p-6">
+              <div className="bg-custom-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-lg p-6">
                 <span
                   className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 cursor-pointer"
                   onClick={toggleModal}
@@ -217,7 +200,7 @@ export default function Home() {
                   onChange={(e) => setDescription(e.target.value)}
                 />
                 <button
-                  className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+                  className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6  "
                   onClick={handleCreateBoard}
                 >
                   Create
@@ -228,7 +211,7 @@ export default function Home() {
 
           {isTaskModalOpen && (
             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-lg p-6">
+              <div className="bg-custom-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-lg p-6">
                 <span
                   className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 cursor-pointer"
                   onClick={toggleTaskModal}
@@ -239,21 +222,21 @@ export default function Home() {
                 <input
                   type="text"
                   className="w-full p-2 border border-gray-300 rounded mb-4"
-                  placeholder="Task Title"
+                  placeholder="Title"
                   value={newTaskTitle}
                   onChange={(e) => setNewTaskTitle(e.target.value)}
                 />
                 <textarea
                   className="w-full p-2 border border-gray-300 rounded mb-4"
-                  placeholder="Task Description"
+                  placeholder="Description"
                   value={newTaskDescription}
                   onChange={(e) => setNewTaskDescription(e.target.value)}
                 />
                 <button
-                  className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+                  className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6"
                   onClick={handleAddTask}
                 >
-                  Add Task
+                  Create Task
                 </button>
               </div>
             </div>
