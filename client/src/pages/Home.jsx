@@ -193,28 +193,72 @@ export default function Home() {
               </div>
             </div>
           )}
-          {isTaskModalOpen && (
-            <div className="modal">
-              <div className="modal-content">
-                <span className="close" onClick={toggleTaskModal}>
+          {isModalOpen && (
+            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-lg p-6">
+                <span
+                  className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 cursor-pointer"
+                  onClick={toggleModal}
+                >
                   &times;
                 </span>
-                <h2>Add New Task</h2>
+                <h2 className="text-xl font-bold mb-4">Create New Board</h2>
                 <input
                   type="text"
+                  className="w-full p-2 border border-gray-300 rounded mb-4"
+                  placeholder="Board Name"
+                  value={boardName}
+                  onChange={(e) => setBoardName(e.target.value)}
+                />
+                <textarea
+                  className="w-full p-2 border border-gray-300 rounded mb-4"
+                  placeholder="Description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+                <button
+                  className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+                  onClick={handleCreateBoard}
+                >
+                  Create
+                </button>
+              </div>
+            </div>
+          )}
+
+          {isTaskModalOpen && (
+            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-lg p-6">
+                <span
+                  className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 cursor-pointer"
+                  onClick={toggleTaskModal}
+                >
+                  &times;
+                </span>
+                <h2 className="text-xl font-bold mb-4">Add New Task</h2>
+                <input
+                  type="text"
+                  className="w-full p-2 border border-gray-300 rounded mb-4"
                   placeholder="Task Title"
                   value={newTaskTitle}
                   onChange={(e) => setNewTaskTitle(e.target.value)}
                 />
                 <textarea
+                  className="w-full p-2 border border-gray-300 rounded mb-4"
                   placeholder="Task Description"
                   value={newTaskDescription}
                   onChange={(e) => setNewTaskDescription(e.target.value)}
                 />
-                <button onClick={handleAddTask}>Add Task</button>
+                <button
+                  className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+                  onClick={handleAddTask}
+                >
+                  Add Task
+                </button>
               </div>
             </div>
           )}
+
           {selectedBoard && <BoardPage board={selectedBoard} />}
         </div>
       </div>
