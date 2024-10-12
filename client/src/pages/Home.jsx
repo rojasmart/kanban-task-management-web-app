@@ -163,7 +163,7 @@ export default function Home() {
                 isDarkMode ? "text-custom-lightgray" : "text-custom-dark"
               }`}
             >
-              Platform Launch
+              {selectedBoard ? selectedBoard.name : "Platform Launch"}
             </p>
             <div className="nav-links flex items-center gap-4">
               <button
