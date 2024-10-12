@@ -1,18 +1,71 @@
 import PropTypes from "prop-types";
+import { useState } from "react";
+import { gql, useMutation } from "@apollo/client";
+
+const CREATE_COLUMN_MUTATION = gql`
+  mutation createColumn($boardId: ID!, $name: String!) {
+    createColumn(boardId: $boardId, name: $name) {
+      id
+      name
+      description
+      columns {
+        name
+        tasks {
+          title
+          description
+        }
+      }
+    }
+  }
+`;
 
 const Board = ({ board }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newColumnName, setNewColumnName] = useState("");
+  const [createColumn] = useMutation(CREATE_COLUMN_MUTATION);
+
+  const toggleModal = () => setIsModalOpen(!isModalOpen);
+
+  const handleCreateColumn = async () => {
+    if (!newColumnName) {
+      console.error("Column name is required");
+      return;
+    }
+    try {
+      await createColumn({
+        variables: {
+          boardId: board.id,
+          name: newColumnName,
+        },
+      });
+      setNewColumnName("");
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error creating column:", error);
+    }
+  };
+
   return (
-    <div className="board">
-      <h2>{board.name}</h2>
-      <div className="columns">
+    <div className="board p-4">
+      <h2 className="text-2xl font-bold mb-4">{board.name}</h2>
+      <button
+        className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6"
+        onClick={toggleModal}
+      >
+        Add new column
+      </button>
+      <div className="columns flex space-x-4 overflow-x-auto">
         {board.columns.map((column, columnIndex) => (
-          <div key={columnIndex} className="column">
-            <h3>{column.name}</h3>
-            <div className="tasks">
+          <div
+            key={columnIndex}
+            className="column flex-shrink-0 w-64 bg-gray-100 p-4 rounded-lg"
+          >
+            <h3 className="text-xl font-bold mb-4">{column.name}</h3>
+            <div className="tasks space-y-4">
               {column.tasks.map((task, taskIndex) => (
                 <div
                   key={taskIndex}
-                  className="bg-custom-white task-card bg-white shadow-md rounded-lg p-4 mb-4"
+                  className="bg-custom-white shadow-md rounded-lg p-4"
                 >
                   <h4 className="font-bold">{task.title}</h4>
                   <p>{task.description}</p>
@@ -22,12 +75,38 @@ const Board = ({ board }) => {
           </div>
         ))}
       </div>
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-lg p-6">
+            <span
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 cursor-pointer"
+              onClick={toggleModal}
+            >
+              &times;
+            </span>
+            <h2 className="text-xl font-bold mb-4">Add New Column</h2>
+            <input
+              type="text"
+              className="w-full p-2 border border-gray-300 rounded mb-4"
+              placeholder="Column Name"
+              value={newColumnName}
+              onChange={(e) => setNewColumnName(e.target.value)}
+            />
+            <button
+              className="bg-blue-500 text-white rounded-full p-3 pl-6 pr-6"
+              onClick={handleCreateColumn}
+            >
+              Create Column
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default Board;
-
 Board.propTypes = {
   board: PropTypes.object.isRequired,
 };
+
+export default Board;

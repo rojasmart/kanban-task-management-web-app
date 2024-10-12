@@ -146,6 +146,8 @@ const typeDefs = gql`
     ): Board
 
     addTaskToColumn(boardId: ID!, columnName: String!, task: TaskInput!): Board
+
+    createColumn(boardId: ID!, name: String!): Board
   }
 `;
 
@@ -205,6 +207,16 @@ const resolvers = {
         throw new Error("Column not found");
       }
       column.tasks.push(task);
+      await board.save();
+      return board;
+    },
+
+    createColumn: async (_, { boardId, name }) => {
+      const board = await Board.findById(boardId);
+      if (!board) {
+        throw new Error("Board not found");
+      }
+      board.columns.push({ name, tasks: [] });
       await board.save();
       return board;
     },
