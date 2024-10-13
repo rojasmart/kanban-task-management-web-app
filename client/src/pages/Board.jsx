@@ -22,6 +22,7 @@ const CREATE_COLUMN_MUTATION = gql`
 const Board = ({ board }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newColumnName, setNewColumnName] = useState("");
+  const [boardState, setBoardState] = useState(board);
   const [createColumn] = useMutation(CREATE_COLUMN_MUTATION);
 
   const toggleModal = () => setIsModalOpen(!isModalOpen);
@@ -32,12 +33,17 @@ const Board = ({ board }) => {
       return;
     }
     try {
-      await createColumn({
+      const { data } = await createColumn({
         variables: {
           boardId: board.id,
           name: newColumnName,
         },
       });
+      const newColumn = data.createColumn;
+      setBoardState((prevBoard) => ({
+        ...prevBoard,
+        columns: [...prevBoard.columns, newColumn],
+      }));
       setNewColumnName("");
       setIsModalOpen(false);
     } catch (error) {
@@ -48,22 +54,26 @@ const Board = ({ board }) => {
   return (
     <div className="board p-4">
       <div className="columns flex space-x-4 overflow-x-auto">
-        {board.columns.map((column, columnIndex) => (
+        {boardState.columns.map((column, columnIndex) => (
           <div
             key={columnIndex}
             className="column flex-shrink-0 w-64 bg-gray-100 p-4 rounded-lg"
           >
             <h3 className="text-xl font-bold mb-4">{column.name}</h3>
             <div className="tasks space-y-4">
-              {column.tasks.map((task, taskIndex) => (
-                <div
-                  key={taskIndex}
-                  className="bg-custom-white shadow-md rounded-lg p-4"
-                >
-                  <h4 className="font-bold">{task.title}</h4>
-                  <p>{task.description}</p>
-                </div>
-              ))}
+              {column.tasks && column.tasks.length > 0 ? (
+                column.tasks.map((task, taskIndex) => (
+                  <div
+                    key={taskIndex}
+                    className="bg-custom-white shadow-md rounded-lg p-4"
+                  >
+                    <h4 className="font-bold">{task.title}</h4>
+                    <p>{task.description}</p>
+                  </div>
+                ))
+              ) : (
+                <p>No tasks available</p>
+              )}
             </div>
           </div>
         ))}
