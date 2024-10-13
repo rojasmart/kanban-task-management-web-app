@@ -6,8 +6,6 @@ function BoardPage({ board }) {
 
   return (
     <div>
-      <h2>{board.name}</h2>
-      <p>{board.description}</p>
       <Board board={board} />
     </div>
   );

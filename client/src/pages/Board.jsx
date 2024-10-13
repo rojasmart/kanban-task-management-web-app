@@ -47,13 +47,6 @@ const Board = ({ board }) => {
 
   return (
     <div className="board p-4">
-      <h2 className="text-2xl font-bold mb-4">{board.name}</h2>
-      <button
-        className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6"
-        onClick={toggleModal}
-      >
-        Add new column
-      </button>
       <div className="columns flex space-x-4 overflow-x-auto">
         {board.columns.map((column, columnIndex) => (
           <div
@@ -74,10 +67,18 @@ const Board = ({ board }) => {
             </div>
           </div>
         ))}
+        <div className="column flex-shrink-0 w-64 bg-custom-darkwhite p-4 rounded-lg flex items-center justify-center">
+          <p
+            className="text-custom-lightgray text-2xl cursor-pointer font-semibold"
+            onClick={toggleModal}
+          >
+            + New column
+          </p>
+        </div>
       </div>
       {isModalOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-lg p-6">
+          <div className="bg-custom-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-lg p-6">
             <span
               className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 cursor-pointer"
               onClick={toggleModal}
@@ -93,7 +94,7 @@ const Board = ({ board }) => {
               onChange={(e) => setNewColumnName(e.target.value)}
             />
             <button
-              className="bg-blue-500 text-white rounded-full p-3 pl-6 pr-6"
+              className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6"
               onClick={handleCreateColumn}
             >
               Create Column
