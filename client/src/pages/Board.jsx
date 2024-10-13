@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { gql, useMutation } from "@apollo/client";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const CREATE_COLUMN_MUTATION = gql`
   mutation createColumn($boardId: ID!, $name: String!) {
@@ -51,41 +52,104 @@ const Board = ({ board }) => {
     }
   };
 
+  const onDragEnd = (result) => {
+    const { source, destination } = result;
+
+    if (!destination) {
+      return;
+    }
+
+    const sourceColumn = boardState.columns[source.droppableId];
+    const destColumn = boardState.columns[destination.droppableId];
+    const sourceTasks = [...sourceColumn.tasks];
+    const destTasks = [...destColumn.tasks];
+    const [removed] = sourceTasks.splice(source.index, 1);
+
+    if (source.droppableId === destination.droppableId) {
+      sourceTasks.splice(destination.index, 0, removed);
+      const newColumn = {
+        ...sourceColumn,
+        tasks: sourceTasks,
+      };
+      const newColumns = [...boardState.columns];
+      newColumns[source.droppableId] = newColumn;
+      setBoardState((prevBoard) => ({
+        ...prevBoard,
+        columns: newColumns,
+      }));
+    } else {
+      destTasks.splice(destination.index, 0, removed);
+      const newSourceColumn = {
+        ...sourceColumn,
+        tasks: sourceTasks,
+      };
+      const newDestColumn = {
+        ...destColumn,
+        tasks: destTasks,
+      };
+      const newColumns = [...boardState.columns];
+      newColumns[source.droppableId] = newSourceColumn;
+      newColumns[destination.droppableId] = newDestColumn;
+      setBoardState((prevBoard) => ({
+        ...prevBoard,
+        columns: newColumns,
+      }));
+    }
+  };
+
   return (
     <div className="board p-4">
-      <div className="columns flex space-x-4 overflow-x-auto">
-        {boardState.columns.map((column, columnIndex) => (
-          <div
-            key={columnIndex}
-            className="column flex-shrink-0 w-64 bg-gray-100 p-4 rounded-lg"
-          >
-            <h3 className="text-xl font-bold mb-4">{column.name}</h3>
-            <div className="tasks space-y-4">
-              {column.tasks && column.tasks.length > 0 ? (
-                column.tasks.map((task, taskIndex) => (
-                  <div
-                    key={taskIndex}
-                    className="bg-custom-white shadow-md rounded-lg p-4"
-                  >
-                    <h4 className="font-bold">{task.title}</h4>
-                    <p>{task.description}</p>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div className="columns flex space-x-4 overflow-x-auto">
+          {boardState.columns.map((column, columnIndex) => (
+            <Droppable key={columnIndex} droppableId={`${columnIndex}`}>
+              {(provided) => (
+                <div
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                  className="column flex-shrink-0 w-64 bg-gray-100 p-4 rounded-lg"
+                >
+                  <h3 className="text-xl font-bold mb-4">{column.name}</h3>
+                  <div className="tasks space-y-4">
+                    {column.tasks && column.tasks.length > 0 ? (
+                      column.tasks.map((task, taskIndex) => (
+                        <Draggable
+                          key={taskIndex}
+                          draggableId={`${columnIndex}-${taskIndex}`}
+                          index={taskIndex}
+                        >
+                          {(provided) => (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              className="bg-custom-white shadow-md rounded-lg p-4"
+                            >
+                              <h4 className="font-bold">{task.title}</h4>
+                              <p>{task.description}</p>
+                            </div>
+                          )}
+                        </Draggable>
+                      ))
+                    ) : (
+                      <p>No tasks available</p>
+                    )}
+                    {provided.placeholder}
                   </div>
-                ))
-              ) : (
-                <p>No tasks available</p>
+                </div>
               )}
-            </div>
+            </Droppable>
+          ))}
+          <div className="column flex-shrink-0 w-64 bg-custom-darkwhite p-4 rounded-lg flex items-center justify-center">
+            <p
+              className="text-custom-lightgray text-2xl cursor-pointer font-semibold"
+              onClick={toggleModal}
+            >
+              + New column
+            </p>
           </div>
-        ))}
-        <div className="column flex-shrink-0 w-64 bg-custom-darkwhite p-4 rounded-lg flex items-center justify-center">
-          <p
-            className="text-custom-lightgray text-2xl cursor-pointer font-semibold"
-            onClick={toggleModal}
-          >
-            + New column
-          </p>
         </div>
-      </div>
+      </DragDropContext>
       {isModalOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
           <div className="relative bg-custom-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-lg p-6">
