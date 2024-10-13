@@ -20,11 +20,38 @@ const CREATE_COLUMN_MUTATION = gql`
   }
 `;
 
+const MOVE_TASK_MUTATION = gql`
+  mutation moveTask(
+    $boardId: ID!
+    $sourceColumnName: String!
+    $destColumnName: String!
+    $taskIndex: Int!
+  ) {
+    moveTask(
+      boardId: $boardId
+      sourceColumnName: $sourceColumnName
+      destColumnName: $destColumnName
+      taskIndex: $taskIndex
+    ) {
+      id
+      name
+      columns {
+        name
+        tasks {
+          title
+          description
+        }
+      }
+    }
+  }
+`;
+
 const Board = ({ board }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newColumnName, setNewColumnName] = useState("");
   const [boardState, setBoardState] = useState(board);
   const [createColumn] = useMutation(CREATE_COLUMN_MUTATION);
+  const [moveTask] = useMutation(MOVE_TASK_MUTATION);
 
   const toggleModal = () => setIsModalOpen(!isModalOpen);
 
@@ -52,7 +79,7 @@ const Board = ({ board }) => {
     }
   };
 
-  const onDragEnd = (result) => {
+  const onDragEnd = async (result) => {
     const { source, destination } = result;
 
     if (!destination) {
@@ -94,6 +121,16 @@ const Board = ({ board }) => {
         ...prevBoard,
         columns: newColumns,
       }));
+
+      // Call the mutation to update the server
+      await moveTask({
+        variables: {
+          boardId: board.id,
+          sourceColumnName: sourceColumn.name,
+          destColumnName: destColumn.name,
+          taskIndex: source.index,
+        },
+      });
     }
   };
 
