@@ -13,7 +13,7 @@ function Sidebar({ toggleModal, boards, onSelectBoard }) {
   return (
     <>
       <div
-        className={`sidebar  ${
+        className={`sidebar ${
           isDarkMode ? "bg-custom-darkgray" : "bg-custom-white"
         } ${isOpen ? "open" : ""}`}
       >
