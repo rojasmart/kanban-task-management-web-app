@@ -31,6 +31,14 @@ body {
   margin: 10px;
 }
 
+.content {
+  transition: margin-left 0.3s ease;
+}
+
+.content.shifted {
+  margin-left: 250px; /* Largura da sidebar */
+}
+
 .sidebar a {
   padding: 10px 15px;
   text-decoration: none;

@@ -61,6 +61,9 @@ function Sidebar({ toggleModal, boards, onSelectBoard }) {
           </button>
         </div>
       </div>
+      <div className={`content ${isOpen ? "shifted" : ""}`}>
+        {/* Conteúdo principal vai aqui */}
+      </div>
     </>
   );
 }

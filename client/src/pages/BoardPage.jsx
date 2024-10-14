@@ -4,11 +4,7 @@ import PropTypes from "prop-types";
 function BoardPage({ board }) {
   if (!board) return <p>Board not found</p>;
 
-  return (
-    <div>
-      <Board board={board} />
-    </div>
-  );
+  return <Board board={board} />;
 }
 
 export default BoardPage;

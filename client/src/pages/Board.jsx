@@ -45,7 +45,6 @@ const MOVE_TASK_MUTATION = gql`
     }
   }
 `;
-
 const Board = ({ board }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newColumnName, setNewColumnName] = useState("");

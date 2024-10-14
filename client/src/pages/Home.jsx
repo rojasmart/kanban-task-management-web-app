@@ -199,8 +199,9 @@ export default function Home() {
           </div>
         </div>
       </header>
-      <div className="container mx-auto">
-        <div className="flex flex-wrap justify-center">
+
+      <div className="container w-full px-4">
+        <div className="flex justify-left m-0 p-0">
           <Sidebar
             toggleModal={toggleModal}
             boards={boards}
