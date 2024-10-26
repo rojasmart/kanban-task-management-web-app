@@ -12,15 +12,9 @@ function Sidebar({ toggleModal, boards, onSelectBoard }) {
 
   return (
     <>
-      <div
-        className={`sidebar ${
-          isDarkMode ? "bg-custom-darkgray" : "bg-custom-white"
-        } ${isOpen ? "open" : ""}`}
-      >
+      <div className={`sidebar ${isDarkMode ? "bg-custom-darkgray" : "bg-custom-white"} ${isOpen ? "open" : ""}`}>
         <div className="pl-4">
-          <p className="title text-sm text-custom-lightgray pl-4 pb-4 overflow-hidden whitespace-nowrap text-overflow-ellipsis">
-            All Boards
-          </p>
+          <p className="title text-sm text-custom-lightgray pl-4 pb-4 overflow-hidden whitespace-nowrap text-overflow-ellipsis">All Boards</p>
           <ul className="list">
             {boards.map((board) => (
               <li key={board.id}>
@@ -35,35 +29,23 @@ function Sidebar({ toggleModal, boards, onSelectBoard }) {
             ))}
 
             <li>
-              <button
-                className="flex items-center text-custom-blue font-bold"
-                onClick={toggleModal}
-              >
-                <img src={IconBoard} className="mr-2 " alt="Board Icon" />+
-                Create New Board
+              <button className="flex items-center text-custom-blue font-bold" onClick={toggleModal}>
+                <img src={IconBoard} className="mr-2 " alt="Board Icon" />+ Create New Board
               </button>
             </li>
           </ul>
         </div>
 
         <div>
-          <button
-            className={`bg-custom-blue mt-4 text-custom-white rounded-full p-3 pl-6 pr-6 theme-btn`}
-            onClick={toggleDarkMode}
-          >
+          <button className={`bg-custom-blue mt-4 text-custom-white rounded-full p-3 pl-6 pr-6 theme-btn`} onClick={toggleDarkMode}>
             Toggle Dark Mode
           </button>
-          <button
-            className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6 toggle-btn"
-            onClick={toggleSidebar}
-          >
+          <button className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6 toggle-btn" onClick={toggleSidebar}>
             {isOpen ? "Close" : "Open"} Sidebar
           </button>
         </div>
       </div>
-      <div className={`content ${isOpen ? "shifted" : ""}`}>
-        {/* Conteúdo principal vai aqui */}
-      </div>
+      <div className={`content ${isOpen ? "shifted" : ""}`}>{/* Conteúdo principal vai aqui */}</div>
     </>
   );
 }

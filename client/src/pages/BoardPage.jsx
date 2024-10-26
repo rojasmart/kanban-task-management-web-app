@@ -7,8 +7,8 @@ function BoardPage({ board }) {
   return <Board board={board} />;
 }
 
-export default BoardPage;
-
 BoardPage.propTypes = {
   board: PropTypes.object,
 };
+
+export default BoardPage;

@@ -21,18 +21,8 @@ const CREATE_COLUMN_MUTATION = gql`
 `;
 
 const MOVE_TASK_MUTATION = gql`
-  mutation moveTask(
-    $boardId: ID!
-    $sourceColumnName: String!
-    $destColumnName: String!
-    $taskIndex: Int!
-  ) {
-    moveTask(
-      boardId: $boardId
-      sourceColumnName: $sourceColumnName
-      destColumnName: $destColumnName
-      taskIndex: $taskIndex
-    ) {
+  mutation moveTask($boardId: ID!, $sourceColumnName: String!, $destColumnName: String!, $taskIndex: Int!) {
+    moveTask(boardId: $boardId, sourceColumnName: $sourceColumnName, destColumnName: $destColumnName, taskIndex: $taskIndex) {
       id
       name
       columns {
@@ -140,20 +130,12 @@ const Board = ({ board }) => {
           {boardState.columns.map((column, columnIndex) => (
             <Droppable key={columnIndex} droppableId={`${columnIndex}`}>
               {(provided) => (
-                <div
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  className="column flex-shrink-0 w-64 bg-gray-100 p-4 rounded-lg"
-                >
+                <div ref={provided.innerRef} {...provided.droppableProps} className="column flex-shrink-0 w-64 bg-gray-100 p-4 rounded-lg">
                   <h3 className="text-xl font-bold mb-4">{column.name}</h3>
                   <div className="tasks space-y-4">
                     {column.tasks && column.tasks.length > 0 ? (
                       column.tasks.map((task, taskIndex) => (
-                        <Draggable
-                          key={taskIndex}
-                          draggableId={`${columnIndex}-${taskIndex}`}
-                          index={taskIndex}
-                        >
+                        <Draggable key={taskIndex} draggableId={`${columnIndex}-${taskIndex}`} index={taskIndex}>
                           {(provided) => (
                             <div
                               ref={provided.innerRef}
@@ -177,10 +159,7 @@ const Board = ({ board }) => {
             </Droppable>
           ))}
           <div className="column flex-shrink-0 w-64 bg-custom-darkwhite p-4 rounded-lg flex items-center justify-center">
-            <p
-              className="text-custom-lightgray text-2xl cursor-pointer font-semibold"
-              onClick={toggleModal}
-            >
+            <p className="text-custom-lightgray text-2xl cursor-pointer font-semibold" onClick={toggleModal}>
               + New column
             </p>
           </div>
@@ -189,10 +168,7 @@ const Board = ({ board }) => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
           <div className="relative bg-custom-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-lg p-6">
-            <span
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 cursor-pointer"
-              onClick={toggleModal}
-            >
+            <span className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 cursor-pointer" onClick={toggleModal}>
               &times;
             </span>
             <h2 className="text-xl font-bold mb-4">Add New Column</h2>
@@ -203,10 +179,7 @@ const Board = ({ board }) => {
               value={newColumnName}
               onChange={(e) => setNewColumnName(e.target.value)}
             />
-            <button
-              className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6"
-              onClick={handleCreateColumn}
-            >
+            <button className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6" onClick={handleCreateColumn}>
               Create Column
             </button>
           </div>

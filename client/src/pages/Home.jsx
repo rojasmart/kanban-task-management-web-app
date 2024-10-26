@@ -8,11 +8,7 @@ import { gql, useQuery, useMutation } from "@apollo/client";
 import BoardPage from "./BoardPage";
 
 const CREATE_BOARD_MUTATION = gql`
-  mutation createBoard(
-    $name: String!
-    $description: String!
-    $columns: [ColumnInput!]!
-  ) {
+  mutation createBoard($name: String!, $description: String!, $columns: [ColumnInput!]!) {
     createBoard(name: $name, description: $description, columns: $columns) {
       id
       name
@@ -29,11 +25,7 @@ const CREATE_BOARD_MUTATION = gql`
 `;
 
 const ADD_TASK_TO_COLUMN_MUTATION = gql`
-  mutation addTaskToColumn(
-    $boardId: ID!
-    $columnName: String!
-    $task: TaskInput!
-  ) {
+  mutation addTaskToColumn($boardId: ID!, $columnName: String!, $task: TaskInput!) {
     addTaskToColumn(boardId: $boardId, columnName: $columnName, task: $task) {
       id
       name
@@ -166,32 +158,17 @@ export default function Home() {
 
   return (
     <>
-      <header
-        className={`${
-          isDarkMode ? "bg-custom-darkgray" : "bg-custom-white"
-        } text-white p-4 pl-8 border-1 border-b-custom-red`}
-      >
+      <header className={`${isDarkMode ? "bg-custom-darkgray" : "bg-custom-white"} text-white p-4 pl-8 border-1 border-b-custom-red`}>
         <div className="mx-auto flex gap-5 items-center ">
           <div className="logo min-w-[235px]">
-            <img
-              src={isDarkMode ? logoLight : logoDark}
-              alt="Logo"
-              className="h-8"
-            />
+            <img src={isDarkMode ? logoLight : logoDark} alt="Logo" className="h-8" />
           </div>
           <div className="menu-wrapper flex items-center gap-5 justify-between w-[100%]">
-            <p
-              className={`font-bold text-2xl ${
-                isDarkMode ? "text-custom-lightgray" : "text-custom-dark"
-              }`}
-            >
+            <p className={`font-bold text-2xl ${isDarkMode ? "text-custom-lightgray" : "text-custom-dark"}`}>
               {selectedBoard ? selectedBoard.name : "Platform Launch"}
             </p>
             <div className="nav-links flex items-center gap-4">
-              <button
-                className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6"
-                onClick={toggleTaskModal}
-              >
+              <button className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6" onClick={toggleTaskModal}>
                 Add new task
               </button>
               <ThreeDotMenu />
@@ -202,18 +179,11 @@ export default function Home() {
 
       <div className="container w-full px-4">
         <div className="flex justify-left m-0 p-0">
-          <Sidebar
-            toggleModal={toggleModal}
-            boards={boards}
-            onSelectBoard={setSelectedBoard}
-          />
+          <Sidebar toggleModal={toggleModal} boards={boards} onSelectBoard={setSelectedBoard} />
           {isModalOpen && (
             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
               <div className="bg-custom-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-lg p-6">
-                <span
-                  className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 cursor-pointer"
-                  onClick={toggleModal}
-                >
+                <span className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 cursor-pointer" onClick={toggleModal}>
                   &times;
                 </span>
                 <h2 className="text-xl font-bold mb-4">Create New Board</h2>
@@ -230,10 +200,7 @@ export default function Home() {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
-                <button
-                  className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6"
-                  onClick={handleCreateBoard}
-                >
+                <button className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6" onClick={handleCreateBoard}>
                   Create
                 </button>
               </div>
@@ -243,10 +210,7 @@ export default function Home() {
           {isTaskModalOpen && (
             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
               <div className="relative bg-custom-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-lg p-6">
-                <span
-                  className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 cursor-pointer"
-                  onClick={toggleTaskModal}
-                >
+                <span className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 cursor-pointer" onClick={toggleTaskModal}>
                   &times;
                 </span>
                 <h2 className="text-xl font-bold mb-4">Add New Task</h2>
@@ -263,10 +227,7 @@ export default function Home() {
                   value={newTaskDescription}
                   onChange={(e) => setNewTaskDescription(e.target.value)}
                 />
-                <button
-                  className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6"
-                  onClick={handleAddTask}
-                >
+                <button className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6" onClick={handleAddTask}>
                   Add Task
                 </button>
               </div>
