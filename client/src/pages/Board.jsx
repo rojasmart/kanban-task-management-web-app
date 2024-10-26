@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
@@ -41,6 +41,10 @@ const Board = ({ board }) => {
   const [boardState, setBoardState] = useState(board);
   const [createColumn] = useMutation(CREATE_COLUMN_MUTATION);
   const [moveTask] = useMutation(MOVE_TASK_MUTATION);
+
+  useEffect(() => {
+    setBoardState(board);
+  }, [board]);
 
   const toggleModal = () => setIsModalOpen(!isModalOpen);
 
