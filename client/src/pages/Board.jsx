@@ -128,7 +128,7 @@ const Board = ({ board }) => {
   };
 
   return (
-    <div className="board p-4">
+    <div className="board p-4 mt-16">
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="columns flex space-x-4 overflow-x-auto h-screen">
           {boardState.columns.map((column, columnIndex) => (
