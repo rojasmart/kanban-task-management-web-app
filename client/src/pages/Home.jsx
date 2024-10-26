@@ -159,7 +159,7 @@ export default function Home() {
   return (
     <>
       <header className={`${isDarkMode ? "bg-custom-darkgray" : "bg-custom-white"} text-white p-4 pl-8 border-1 border-b-custom-red`}>
-        <div className="mx-auto flex gap-5 items-center ">
+        <div className="mx-auto flex gap-5 items-center">
           <div className="logo min-w-[235px]">
             <img src={isDarkMode ? logoLight : logoDark} alt="Logo" className="h-8" />
           </div>
@@ -177,8 +177,8 @@ export default function Home() {
         </div>
       </header>
 
-      <div className="container w-full px-4">
-        <div className="flex justify-left m-0 p-0">
+      <div className="container">
+        <div className="flex justify-left m-0 p-0 h-screen w-screen">
           <Sidebar toggleModal={toggleModal} boards={boards} onSelectBoard={setSelectedBoard} />
           {isModalOpen && (
             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">

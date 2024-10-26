@@ -29,7 +29,9 @@ export default {
     colors: {
       blue: "#007bff",
       pink: "#ff49db",
-      // Define other colors as needed
+      red: {
+        600: "#dc2626", // Ensure this color is defined
+      },
     },
   },
   plugins: [],
