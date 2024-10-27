@@ -60,7 +60,9 @@ const Board = ({ board }) => {
           name: newColumnName,
         },
       });
-      const newColumn = data.createColumn;
+      console.log("Server response:", data); // Log the server response
+      const newColumn = data.createColumn.columns.at(-1);
+
       setBoardState((prevBoard) => ({
         ...prevBoard,
         columns: [...prevBoard.columns, newColumn],

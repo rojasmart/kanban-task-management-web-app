@@ -213,9 +213,10 @@ const resolvers = {
       if (!board) {
         throw new Error("Board not found");
       }
-      board.columns.push({ name, tasks: [] });
+      const newColumn = { name, tasks: [] };
+      board.columns.push(newColumn);
       await board.save();
-      return board;
+      return newColumn;
     },
 
     moveTask: async (_, { boardId, sourceColumnName, destColumnName, taskIndex }) => {
