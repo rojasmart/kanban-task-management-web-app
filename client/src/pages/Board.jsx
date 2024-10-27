@@ -156,7 +156,7 @@ const Board = ({ board }) => {
                         </Draggable>
                       ))
                     ) : (
-                      <p>No tasks available</p>
+                      <div className="p-4 rounded-lg border-dashed border-2 border-custom-lightgray h-screen"></div>
                     )}
                     {provided.placeholder}
                   </div>
