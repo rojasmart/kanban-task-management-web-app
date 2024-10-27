@@ -13,7 +13,6 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          {/* Adjust Home route to act as a layout for nested routes */}
           <Route path="/home" element={<Home />} />
         </Routes>
       </Router>

@@ -109,3 +109,87 @@ body {
 .list button:hover {
   margin-right: 0; /* Button comes from the right on hover */
 }
+
+.theme-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-toggle-container {
+  position: absolute;
+  width: 200px;
+  bottom: 180px;
+  left: 10%;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px; /* Reduced width */
+  height: 20px; /* Reduced height */
+  margin: 0 10px; /* Add margin to space out the icons */
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 20px; /* Adjusted for smaller size */
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px; /* Reduced height */
+  width: 16px; /* Reduced width */
+  left: 2px; /* Adjusted for smaller size */
+  bottom: 2px; /* Adjusted for smaller size */
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #2196f3;
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px); /* Adjusted for smaller size */
+}
+
+.slider.round {
+  border-radius: 20px; /* Adjusted for smaller size */
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.icon {
+  font-size: 18px; /* Reduced font size */
+  color: #ccc;
+  transition: color 0.4s;
+}
+
+.icon.active {
+  color: #2196f3;
+}
+
+.icon.inactive {
+  color: #ccc;
+}

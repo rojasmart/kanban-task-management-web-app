@@ -2,6 +2,9 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 import { useTheme } from "../../themeContext";
 import IconBoard from "../assets/icon-board.svg";
+import ThemeToggle from "./ThemeToggle";
+import SidebarToggle from "./SidebarToggle";
+
 import "../index.css";
 
 function Sidebar({ toggleModal, boards, onSelectBoard }) {
@@ -36,15 +39,12 @@ function Sidebar({ toggleModal, boards, onSelectBoard }) {
           </ul>
         </div>
 
-        <div>
-          <button className={`bg-custom-blue mt-4 text-custom-white rounded-full p-3 pl-6 pr-6 theme-btn`} onClick={toggleDarkMode}>
-            Toggle Dark Mode
-          </button>
-          <button className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6 toggle-btn" onClick={toggleSidebar}>
-            {isOpen ? "Close" : "Open"} Sidebar
-          </button>
+        <SidebarToggle isOpen={isOpen} toggleSidebar={toggleSidebar} />
+        <div className="theme-toggle-container bg-custom-lightwhite">
+          <ThemeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
         </div>
       </div>
+
       <div className={`content ${isOpen ? "shifted" : ""}`}>{/* Conteúdo principal vai aqui */}</div>
     </>
   );
