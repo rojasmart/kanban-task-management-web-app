@@ -138,12 +138,9 @@ const typeDefs = gql`
   type Mutation {
     login(email: String!, password: String!): User
     register(email: String!, password: String!): User
+    moveTask(boardId: ID!, sourceColumnName: String!, destColumnName: String!, taskIndex: Int!): Board
 
-    createBoard(
-      name: String!
-      description: String
-      columns: [ColumnInput!]!
-    ): Board
+    createBoard(name: String!, description: String, columns: [ColumnInput!]!): Board
 
     addTaskToColumn(boardId: ID!, columnName: String!, task: TaskInput!): Board
 
@@ -220,6 +217,26 @@ const resolvers = {
       await board.save();
       return board;
     },
+
+    moveTask: async (_, { boardId, sourceColumnName, destColumnName, taskIndex }) => {
+      const board = await Board.findById(boardId);
+      if (!board) {
+        throw new Error("Board not found");
+      }
+
+      const sourceColumn = board.columns.find((col) => col.name === sourceColumnName);
+      const destColumn = board.columns.find((col) => col.name === destColumnName);
+
+      if (!sourceColumn || !destColumn) {
+        throw new Error("Column not found");
+      }
+
+      const [task] = sourceColumn.tasks.splice(taskIndex, 1);
+      destColumn.tasks.push(task);
+
+      await board.save();
+      return board;
+    },
   },
 };
 
@@ -257,9 +274,7 @@ const startServer = async () => {
     .then(() => console.log("MongoDB connected"))
     .catch((err) => console.error("MongoDB connection error:", err));
 
-  app.listen({ port: 4000 }, () =>
-    console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
-  );
+  app.listen({ port: 4000 }, () => console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`));
 };
 
 startServer();
