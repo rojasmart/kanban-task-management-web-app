@@ -190,22 +190,25 @@ export default function Home() {
                 <span className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 cursor-pointer" onClick={toggleModal}>
                   &times;
                 </span>
-                <h2 className="text-xl font-bold mb-4">Create New Board</h2>
-                <input
-                  type="text"
-                  className="w-full p-2 border border-gray-300 rounded mb-4"
-                  placeholder="Board Name"
-                  value={boardName}
-                  onChange={(e) => setBoardName(e.target.value)}
-                />
+                <h2 className="text-xl font-bold mb-4">Add New Board</h2>
+                <label className="block mb-2 text-sm font-medium text-gray-700">
+                  Board Name
+                  <input
+                    type="text"
+                    className="w-full p-2 border border-gray-300 rounded mb-4"
+                    placeholder="e.g. Webdevelopment"
+                    value={boardName}
+                    onChange={(e) => setBoardName(e.target.value)}
+                  />
+                </label>
                 <textarea
                   className="w-full p-2 border border-gray-300 rounded mb-4"
                   placeholder="Description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
-                <button className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6" onClick={handleCreateBoard}>
-                  Create
+                <button className="w-full bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6" onClick={handleCreateBoard}>
+                  Create New Board
                 </button>
               </div>
             </div>
