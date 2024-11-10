@@ -131,6 +131,11 @@ export default function Home() {
     setNewColumnNames(updatedColumnNames);
   };
 
+  const handleRemoveColumnName = (index) => {
+    const updatedColumnNames = newColumnNames.filter((_, i) => i !== index);
+    setNewColumnNames(updatedColumnNames);
+  };
+
   const handleCreateColumn = async () => {
     if (!newColumnName) {
       console.error("Column name is required");
@@ -258,14 +263,18 @@ export default function Home() {
                 <label className="block mb-2 text-sm font-medium text-gray-700">
                   Board Columns
                   {newColumnNames.map((name, index) => (
-                    <input
-                      key={index}
-                      type="text"
-                      className="w-full p-2 border border-gray-300 rounded mb-4"
-                      placeholder={`Column ${index + 1}`}
-                      value={name}
-                      onChange={(e) => handleColumnNameChange(index, e.target.value)}
-                    />
+                    <div key={index} className="flex items-center mb-4">
+                      <input
+                        type="text"
+                        className="w-full p-2 border border-gray-300 rounded"
+                        placeholder={`Column ${index + 1}`}
+                        value={name}
+                        onChange={(e) => handleColumnNameChange(index, e.target.value)}
+                      />
+                      <button className="ml-2 text-red-500 hover:text-red-700" onClick={() => handleRemoveColumnName(index)}>
+                        &times;
+                      </button>
+                    </div>
                   ))}
                   <button className="w-full bg-custom-lightwhite text-custom-blue rounded-full p-3 pl-6 pr-6" onClick={handleAddColumnName}>
                     + Add New Column
