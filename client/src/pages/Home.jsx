@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import logoDark from "../assets/logo-dark.svg";
 import logoLight from "../assets/logo-light.svg";
 import Sidebar from "../components/Sidebar";
@@ -16,6 +16,23 @@ const CREATE_BOARD_MUTATION = gql`
         name
         tasks {
           title
+        }
+      }
+    }
+  }
+`;
+
+const CREATE_COLUMN_MUTATION = gql`
+  mutation createColumn($boardId: ID!, $name: String!) {
+    createColumn(boardId: $boardId, name: $name) {
+      id
+      name
+      description
+      columns {
+        name
+        tasks {
+          title
+          description
         }
       }
     }
@@ -60,15 +77,21 @@ export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [boardName, setBoardName] = useState("");
-  const [description, setDescription] = useState("");
   const [selectedBoard, setSelectedBoard] = useState(null);
+  const [newColumnName, setNewColumnName] = useState("");
+  const [boardState, setBoardState] = useState(selectedBoard);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskDescription, setNewTaskDescription] = useState("");
   const [createBoard] = useMutation(CREATE_BOARD_MUTATION);
+  const [createColumn] = useMutation(CREATE_COLUMN_MUTATION);
   const [addTaskToColumn] = useMutation(ADD_TASK_TO_COLUMN_MUTATION);
   const { loading, error, data, refetch } = useQuery(GET_BOARDS);
   const toggleModal = () => setIsModalOpen(!isModalOpen);
   const toggleTaskModal = () => setIsTaskModalOpen(!isTaskModalOpen);
+
+  useEffect(() => {
+    setBoardState(selectedBoard);
+  }, [selectedBoard]);
 
   const handleCreateBoard = async () => {
     if (!boardName) {
@@ -81,12 +104,15 @@ export default function Home() {
           name: "To Do", // Ensure column name is set
           tasks: [],
         },
+        {
+          name: "Doing",
+          tasks: [],
+        },
       ];
 
       const response = await createBoard({
         variables: {
           name: boardName,
-
           columns: initialColumns,
         },
       });
@@ -97,6 +123,32 @@ export default function Home() {
       refetch();
     } catch (error) {
       console.error("Error creating board:", error);
+    }
+  };
+
+  const handleCreateColumn = async () => {
+    if (!newColumnName) {
+      console.error("Column name is required");
+      return;
+    }
+    try {
+      const { data } = await createColumn({
+        variables: {
+          boardId: selectedBoard.id,
+          name: newColumnName,
+        },
+      });
+      console.log("Server response:", data); // Log the server response
+      const newColumn = data.createColumn.columns.at(-1);
+
+      setBoardState((prevBoard) => ({
+        ...prevBoard,
+        columns: [...prevBoard.columns, newColumn],
+      }));
+      setNewColumnName("");
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error creating column:", error);
     }
   };
 
@@ -198,10 +250,32 @@ export default function Home() {
                     onChange={(e) => setBoardName(e.target.value)}
                   />
                 </label>
+                <label className="block mb-2 text-sm font-medium text-gray-700">
+                  Board Columns
+                  <input
+                    type="text"
+                    className="w-full p-2 border border-gray-300 rounded mb-4"
+                    placeholder="e.g. To Do"
+                    value={newColumnName}
+                    onChange={(e) => setNewColumnName(e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    className="w-full p-2 border border-gray-300 rounded mb-4"
+                    placeholder="e.g. Doing"
+                    value={newColumnName}
+                    onChange={(e) => setNewColumnName(e.target.value)}
+                  />
+                </label>
+                <div className="space-y-4">
+                  <button className="w-full bg-custom-lightwhite text-custom-blue rounded-full p-3 pl-6 pr-6" onClick={handleCreateColumn}>
+                    + Add New Column
+                  </button>
 
-                <button className="w-full bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6" onClick={handleCreateBoard}>
-                  Create New Board
-                </button>
+                  <button className="w-full bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6" onClick={handleCreateBoard}>
+                    Create New Board
+                  </button>
+                </div>
               </div>
             </div>
           )}
