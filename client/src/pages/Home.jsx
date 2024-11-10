@@ -78,7 +78,7 @@ export default function Home() {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [boardName, setBoardName] = useState("");
   const [selectedBoard, setSelectedBoard] = useState(null);
-  const [newColumnName, setNewColumnName] = useState("");
+  const [newColumnNames, setNewColumnNames] = useState(["To Do", "Doing"]); // Default columns
   const [boardState, setBoardState] = useState(selectedBoard);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskDescription, setNewTaskDescription] = useState("");
@@ -99,16 +99,10 @@ export default function Home() {
       return;
     }
     try {
-      const initialColumns = [
-        {
-          name: "To Do", // Ensure column name is set
-          tasks: [],
-        },
-        {
-          name: "Doing",
-          tasks: [],
-        },
-      ];
+      const initialColumns = newColumnNames.map((name) => ({
+        name,
+        tasks: [],
+      }));
 
       const response = await createBoard({
         variables: {
@@ -119,11 +113,22 @@ export default function Home() {
       console.log("Board created:", response.data.createBoard);
       setIsModalOpen(false);
       setBoardName("");
+      setNewColumnNames(["To Do", "Doing"]); // Reset to default columns
 
       refetch();
     } catch (error) {
       console.error("Error creating board:", error);
     }
+  };
+
+  const handleAddColumnName = () => {
+    setNewColumnNames([...newColumnNames, ""]);
+  };
+
+  const handleColumnNameChange = (index, value) => {
+    const updatedColumnNames = [...newColumnNames];
+    updatedColumnNames[index] = value;
+    setNewColumnNames(updatedColumnNames);
   };
 
   const handleCreateColumn = async () => {
@@ -252,26 +257,21 @@ export default function Home() {
                 </label>
                 <label className="block mb-2 text-sm font-medium text-gray-700">
                   Board Columns
-                  <input
-                    type="text"
-                    className="w-full p-2 border border-gray-300 rounded mb-4"
-                    placeholder="e.g. To Do"
-                    value={newColumnName}
-                    onChange={(e) => setNewColumnName(e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    className="w-full p-2 border border-gray-300 rounded mb-4"
-                    placeholder="e.g. Doing"
-                    value={newColumnName}
-                    onChange={(e) => setNewColumnName(e.target.value)}
-                  />
-                </label>
-                <div className="space-y-4">
-                  <button className="w-full bg-custom-lightwhite text-custom-blue rounded-full p-3 pl-6 pr-6" onClick={handleCreateColumn}>
+                  {newColumnNames.map((name, index) => (
+                    <input
+                      key={index}
+                      type="text"
+                      className="w-full p-2 border border-gray-300 rounded mb-4"
+                      placeholder={`Column ${index + 1}`}
+                      value={name}
+                      onChange={(e) => handleColumnNameChange(index, e.target.value)}
+                    />
+                  ))}
+                  <button className="w-full bg-custom-lightwhite text-custom-blue rounded-full p-3 pl-6 pr-6" onClick={handleAddColumnName}>
                     + Add New Column
                   </button>
-
+                </label>
+                <div className="space-y-4">
                   <button className="w-full bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6" onClick={handleCreateBoard}>
                     Create New Board
                   </button>
