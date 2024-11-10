@@ -70,7 +70,6 @@ const boardSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  description: String,
   columns: [
     {
       name: {
@@ -105,7 +104,6 @@ const typeDefs = gql`
   type Board {
     id: ID!
     name: String!
-    description: String
     columns: [Column!]!
   }
 
@@ -140,7 +138,7 @@ const typeDefs = gql`
     register(email: String!, password: String!): User
     moveTask(boardId: ID!, sourceColumnName: String!, destColumnName: String!, taskIndex: Int!): Board
 
-    createBoard(name: String!, description: String, columns: [ColumnInput!]!): Board
+    createBoard(name: String!, columns: [ColumnInput!]!): Board
 
     addTaskToColumn(boardId: ID!, columnName: String!, task: TaskInput!): Board
 
@@ -183,7 +181,7 @@ const resolvers = {
       return { id: user.id, email: user.email, token };
     },
 
-    createBoard: async (_, { name, description, columns }) => {
+    createBoard: async (_, { name, columns }) => {
       // Ensure columns have valid names
       const validColumns = columns.map((column) => {
         if (!column.name) {
@@ -192,7 +190,7 @@ const resolvers = {
         return column;
       });
 
-      const newBoard = new Board({ name, description, columns: validColumns });
+      const newBoard = new Board({ name, columns: validColumns });
       await newBoard.save();
       return newBoard;
     },

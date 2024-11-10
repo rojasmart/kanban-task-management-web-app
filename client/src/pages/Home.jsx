@@ -8,16 +8,14 @@ import { gql, useQuery, useMutation } from "@apollo/client";
 import BoardPage from "./BoardPage";
 
 const CREATE_BOARD_MUTATION = gql`
-  mutation createBoard($name: String!, $description: String!, $columns: [ColumnInput!]!) {
-    createBoard(name: $name, description: $description, columns: $columns) {
+  mutation createBoard($name: String!, $columns: [ColumnInput!]!) {
+    createBoard(name: $name, columns: $columns) {
       id
       name
-      description
       columns {
         name
         tasks {
           title
-          description
         }
       }
     }
@@ -46,7 +44,6 @@ const GET_BOARDS = gql`
     boards {
       id
       name
-      description
       columns {
         name
         tasks {
@@ -89,14 +86,14 @@ export default function Home() {
       const response = await createBoard({
         variables: {
           name: boardName,
-          description: description,
+
           columns: initialColumns,
         },
       });
       console.log("Board created:", response.data.createBoard);
       setIsModalOpen(false);
       setBoardName("");
-      setDescription("");
+
       refetch();
     } catch (error) {
       console.error("Error creating board:", error);
@@ -201,12 +198,7 @@ export default function Home() {
                     onChange={(e) => setBoardName(e.target.value)}
                   />
                 </label>
-                <textarea
-                  className="w-full p-2 border border-gray-300 rounded mb-4"
-                  placeholder="Description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
+
                 <button className="w-full bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6" onClick={handleCreateBoard}>
                   Create New Board
                 </button>
