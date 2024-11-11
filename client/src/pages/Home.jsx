@@ -232,7 +232,7 @@ export default function Home() {
             </p>
             <div className="nav-links flex items-center gap-4">
               <button className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6" onClick={toggleTaskModal}>
-                Add new task
+                + Add new task
               </button>
               <ThreeDotMenu />
             </div>
@@ -296,21 +296,29 @@ export default function Home() {
                   &times;
                 </span>
                 <h2 className="text-xl font-bold mb-4">Add New Task</h2>
-                <input
-                  type="text"
-                  className="w-full p-2 border border-gray-300 rounded mb-4"
-                  placeholder="Task Title"
-                  value={newTaskTitle}
-                  onChange={(e) => setNewTaskTitle(e.target.value)}
-                />
-                <textarea
-                  className="w-full p-2 border border-gray-300 rounded mb-4"
-                  placeholder="Task Description"
-                  value={newTaskDescription}
-                  onChange={(e) => setNewTaskDescription(e.target.value)}
-                />
-                <button className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6" onClick={handleAddTask}>
-                  Add Task
+                <label className="block mb-2 text-sm font-medium text-gray-700">
+                  Title
+                  <input
+                    type="text"
+                    className="w-full p-2 border border-gray-300 rounded mb-4"
+                    placeholder="e.g. Take Coffee Break"
+                    value={newTaskTitle}
+                    onChange={(e) => setNewTaskTitle(e.target.value)}
+                  />
+                </label>
+                <label className="block mb-2 text-sm font-medium text-gray-700">
+                  Description
+                  <textarea
+                    className="w-full p-2 border border-gray-300 rounded mb-4"
+                    placeholder="e.g. It’s always good to take a break. This 15 minute break will 
+recharge the batteries a little."
+                    value={newTaskDescription}
+                    onChange={(e) => setNewTaskDescription(e.target.value)}
+                  />
+                </label>
+                <label className="block mb-2 text-sm font-medium text-gray-700"></label>
+                <button className="w-full bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6" onClick={handleAddTask}>
+                  Create Task
                 </button>
               </div>
             </div>
