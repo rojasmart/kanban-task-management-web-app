@@ -82,6 +82,7 @@ export default function Home() {
   const [boardState, setBoardState] = useState(selectedBoard);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskDescription, setNewTaskDescription] = useState("");
+  const [subtasks, setSubtasks] = useState([{ title: "" }]);
   const [createBoard] = useMutation(CREATE_BOARD_MUTATION);
   const [createColumn] = useMutation(CREATE_COLUMN_MUTATION);
   const [addTaskToColumn] = useMutation(ADD_TASK_TO_COLUMN_MUTATION);
@@ -176,12 +177,11 @@ export default function Home() {
           task: {
             title: newTaskTitle,
             description: newTaskDescription,
+            subtasks: subtasks.filter((subtask) => subtask.title), // Only include non-empty subtasks
           },
         },
       });
-
       console.log("Task added:", response.data.addTaskToColumn);
-
       // Atualize o estado do selectedBoard diretamente
       const updatedBoard = {
         ...selectedBoard,
@@ -194,6 +194,7 @@ export default function Home() {
                 {
                   title: newTaskTitle,
                   description: newTaskDescription,
+                  subtasks: subtasks.filter((subtask) => subtask.title),
                 },
               ],
             };
@@ -205,10 +206,20 @@ export default function Home() {
       setSelectedBoard(updatedBoard);
       setNewTaskTitle("");
       setNewTaskDescription("");
+      setSubtasks([{ title: "" }]); // Reset subtasks
       setIsTaskModalOpen(false);
     } catch (error) {
       console.error("Error adding task:", error);
     }
+  };
+
+  const handleAddSubtask = () => {
+    setSubtasks([...subtasks, { title: "" }]);
+  };
+
+  const handleSubtaskChange = (index, value) => {
+    const updatedSubtasks = subtasks.map((subtask, i) => (i === index ? { ...subtask, title: value } : subtask));
+    setSubtasks(updatedSubtasks);
   };
 
   if (loading) return <p>Loading...</p>;
@@ -310,19 +321,35 @@ export default function Home() {
                   Description
                   <textarea
                     className="w-full p-2 border border-gray-300 rounded mb-4"
-                    placeholder="e.g. It’s always good to take a break. This 15 minute break will 
-recharge the batteries a little."
+                    placeholder="e.g. It’s always good to take a break. This 15 minute break will recharge the batteries a little."
                     value={newTaskDescription}
                     onChange={(e) => setNewTaskDescription(e.target.value)}
                   />
                 </label>
-                <label className="block mb-2 text-sm font-medium text-gray-700"></label>
+                <label className="block mb-2 text-sm font-medium text-gray-700">
+                  Subtasks
+                  {subtasks.map((subtask, index) => (
+                    <div key={index} className="flex items-center mb-2">
+                      <input
+                        type="text"
+                        className="w-full p-2 border border-gray-300 rounded"
+                        placeholder={`Subtask ${index + 1}`}
+                        value={subtask.title}
+                        onChange={(e) => handleSubtaskChange(index, e.target.value)}
+                      />
+                    </div>
+                  ))}
+                  <button className="w-full bg-custom-lightwhite text-custom-blue rounded-full p-3 pl-6 pr-6" onClick={handleAddSubtask}>
+                    + Add Subtask
+                  </button>
+                </label>
                 <button className="w-full bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6" onClick={handleAddTask}>
                   Create Task
                 </button>
               </div>
             </div>
           )}
+
           {selectedBoard && <BoardPage board={selectedBoard} />}
         </div>
       </div>
