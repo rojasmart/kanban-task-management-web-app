@@ -44,7 +44,6 @@ const ADD_TASK_TO_COLUMN_MUTATION = gql`
     addTaskToColumn(boardId: $boardId, columnName: $columnName, task: $task) {
       id
       name
-      description
       columns {
         name
         tasks {
@@ -52,6 +51,14 @@ const ADD_TASK_TO_COLUMN_MUTATION = gql`
           description
         }
       }
+    }
+  }
+`;
+
+const CREATE_SUBTASK_MUTATION = gql`
+  mutation createSubtask($boardId: ID!, $columnName: String!, $taskId: ID!, $subtask: SubtaskInput!) {
+    createSubtask(boardId: $boardId, columnName: $columnName, taskId: $taskId, subtask: $subtask) {
+      title
     }
   }
 `;
@@ -85,6 +92,7 @@ export default function Home() {
   const [subtasks, setSubtasks] = useState([{ title: "" }]);
   const [createBoard] = useMutation(CREATE_BOARD_MUTATION);
   const [createColumn] = useMutation(CREATE_COLUMN_MUTATION);
+  const [createSubtask] = useMutation(CREATE_SUBTASK_MUTATION);
   const [addTaskToColumn] = useMutation(ADD_TASK_TO_COLUMN_MUTATION);
   const { loading, error, data, refetch } = useQuery(GET_BOARDS);
   const toggleModal = () => setIsModalOpen(!isModalOpen);
@@ -168,7 +176,6 @@ export default function Home() {
       console.error("Task title, description, and selected board are required");
       return;
     }
-
     try {
       const response = await addTaskToColumn({
         variables: {
@@ -182,7 +189,19 @@ export default function Home() {
         },
       });
       console.log("Task added:", response.data.addTaskToColumn);
-      // Atualize o estado do selectedBoard diretamente
+      const newTaskId = response.data.addTaskToColumn.columns
+        .find((col) => col.name === "To Do")
+        .tasks.find((task) => task.title === newTaskTitle).id; // Use .id instead of ._id
+      for (const subtask of subtasks.filter((subtask) => subtask.title)) {
+        await createSubtask({
+          variables: {
+            boardId: selectedBoard.id,
+            columnName: "To Do",
+            taskId: newTaskId,
+            subtask: { title: subtask.title },
+          },
+        });
+      }
       const updatedBoard = {
         ...selectedBoard,
         columns: selectedBoard.columns.map((column) => {
@@ -202,7 +221,6 @@ export default function Home() {
           return column;
         }),
       };
-
       setSelectedBoard(updatedBoard);
       setNewTaskTitle("");
       setNewTaskDescription("");

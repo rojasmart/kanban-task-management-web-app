@@ -115,11 +115,21 @@ const typeDefs = gql`
   type Task {
     title: String!
     description: String
+    subtasks: [Subtask!]!
+  }
+
+  type Subtask {
+    title: String!
   }
 
   input TaskInput {
     title: String!
     description: String
+    subtasks: [SubtaskInput!]!
+  }
+
+  input SubtaskInput {
+    title: String!
   }
 
   input ColumnInput {
@@ -136,13 +146,11 @@ const typeDefs = gql`
   type Mutation {
     login(email: String!, password: String!): User
     register(email: String!, password: String!): User
-    moveTask(boardId: ID!, sourceColumnName: String!, destColumnName: String!, taskIndex: Int!): Board
-
     createBoard(name: String!, columns: [ColumnInput!]!): Board
-
     addTaskToColumn(boardId: ID!, columnName: String!, task: TaskInput!): Board
-
-    createColumn(boardId: ID!, name: String!): Board
+    createSubtask(boardId: ID!, columnName: String!, taskId: ID!, subtask: SubtaskInput!): Task
+    createColumn(boardId: ID!, name: String!): Column
+    moveTask(boardId: ID!, sourceColumnName: String!, destColumnName: String!, taskIndex: Int!): Board
   }
 `;
 
@@ -204,6 +212,21 @@ const resolvers = {
       column.tasks.push(task);
       await board.save();
       return board;
+    },
+
+    createSubtask: async (_, { boardId, columnName, taskId, subtask }) => {
+      const board = await Board.findById(boardId);
+      const column = board.columns.find((col) => col.name === columnName);
+      if (!column) {
+        throw new Error("Column not found");
+      }
+      const task = column.tasks.id(taskId);
+      if (!task) {
+        throw new Error("Task not found");
+      }
+      task.subtasks.push(subtask);
+      await board.save();
+      return task;
     },
 
     createColumn: async (_, { boardId, name }) => {
