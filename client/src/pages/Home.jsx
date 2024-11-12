@@ -240,6 +240,11 @@ export default function Home() {
     setSubtasks(updatedSubtasks);
   };
 
+  const handleRemoveSubtask = (index) => {
+    const updatedSubtasks = subtasks.filter((_, i) => i !== index);
+    setSubtasks(updatedSubtasks);
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
   const boards = data.boards;
@@ -355,6 +360,9 @@ export default function Home() {
                         value={subtask.title}
                         onChange={(e) => handleSubtaskChange(index, e.target.value)}
                       />
+                      <button className="ml-2 text-red-500 hover:text-red-700" onClick={() => handleRemoveSubtask(index)}>
+                        &times;
+                      </button>
                     </div>
                   ))}
                   <button className="w-full bg-custom-lightwhite text-custom-blue rounded-full p-3 pl-6 pr-6" onClick={handleAddSubtask}>
