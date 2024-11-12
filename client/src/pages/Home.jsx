@@ -47,8 +47,12 @@ const ADD_TASK_TO_COLUMN_MUTATION = gql`
       columns {
         name
         tasks {
+          id
           title
           description
+          subtasks {
+            title
+          }
         }
       }
     }
@@ -191,7 +195,7 @@ export default function Home() {
       console.log("Task added:", response.data.addTaskToColumn);
       const newTaskId = response.data.addTaskToColumn.columns
         .find((col) => col.name === "To Do")
-        .tasks.find((task) => task.title === newTaskTitle).id; // Use .id instead of ._id
+        .tasks.find((task) => task.title === newTaskTitle).id;
       for (const subtask of subtasks.filter((subtask) => subtask.title)) {
         await createSubtask({
           variables: {
@@ -213,7 +217,9 @@ export default function Home() {
                 {
                   title: newTaskTitle,
                   description: newTaskDescription,
-                  subtasks: subtasks.filter((subtask) => subtask.title),
+                  subtasks: subtasks
+                    .filter((subtask) => subtask.title)
+                    .map((subtask) => ({ ...subtask, title: subtask.title || "Untitled Subtask" })),
                 },
               ],
             };

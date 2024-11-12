@@ -23,6 +23,23 @@ const userSchema = new mongoose.Schema({
   password: String,
 });
 
+//Task Schema
+const taskSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true,
+  },
+  description: String,
+  subtasks: [
+    {
+      title: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
+});
+
 //Column Schema
 const columnSchema = new mongoose.Schema({
   name: {
@@ -88,6 +105,7 @@ const boardSchema = new mongoose.Schema({
     },
   ],
 });
+
 const User = mongoose.model("User", userSchema);
 const Column = mongoose.model("Column", columnSchema);
 const KanbanItem = mongoose.model("KanbanItem", kanbanItemSchema);
@@ -113,6 +131,7 @@ const typeDefs = gql`
   }
 
   type Task {
+    id: ID!
     title: String!
     description: String
     subtasks: [Subtask!]!
@@ -190,12 +209,11 @@ const resolvers = {
     },
 
     createBoard: async (_, { name, columns }) => {
-      // Ensure columns have valid names
       const validColumns = columns.map((column) => {
         if (!column.name) {
           throw new Error("Column name is required");
         }
-        return column;
+        return { ...column, tasks: column.tasks || [] }; // Ensure tasks array is initialized
       });
 
       const newBoard = new Board({ name, columns: validColumns });
@@ -205,11 +223,17 @@ const resolvers = {
 
     addTaskToColumn: async (_, { boardId, columnName, task }) => {
       const board = await Board.findById(boardId);
+      if (!board) {
+        throw new Error("Board not found");
+      }
+
       const column = board.columns.find((col) => col.name === columnName);
       if (!column) {
         throw new Error("Column not found");
       }
-      column.tasks.push(task);
+
+      const newTask = { ...task, id: new mongoose.Types.ObjectId(), subtasks: task.subtasks || [] };
+      column.tasks.push(newTask);
       await board.save();
       return board;
     },
