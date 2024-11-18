@@ -62,7 +62,11 @@ const ADD_TASK_TO_COLUMN_MUTATION = gql`
 const CREATE_SUBTASK_MUTATION = gql`
   mutation createSubtask($boardId: ID!, $columnName: String!, $taskId: ID!, $subtask: SubtaskInput!) {
     createSubtask(boardId: $boardId, columnName: $columnName, taskId: $taskId, subtask: $subtask) {
+      id
       title
+      subtasks {
+        title
+      }
     }
   }
 `;
@@ -181,53 +185,19 @@ export default function Home() {
       return;
     }
     try {
+      const validSubtasks = subtasks.filter((subtask) => subtask.title.trim() !== ""); // Filtra subtasks válidas
       const response = await addTaskToColumn({
         variables: {
-          boardId: selectedBoard.id,
+          boardId: selectedBoard.id, // Certifique-se de que selectedBoard.id está definido
           columnName: "To Do",
           task: {
             title: newTaskTitle,
             description: newTaskDescription,
-            subtasks: subtasks.filter((subtask) => subtask.title), // Only include non-empty subtasks
+            subtasks: validSubtasks, // Inclua apenas subtasks válidas
           },
         },
       });
       console.log("Task added:", response.data.addTaskToColumn);
-      const newTaskId = response.data.addTaskToColumn.columns
-        .find((col) => col.name === "To Do")
-        .tasks.find((task) => task.title === newTaskTitle).id;
-      for (const subtask of subtasks.filter((subtask) => subtask.title)) {
-        await createSubtask({
-          variables: {
-            boardId: selectedBoard.id,
-            columnName: "To Do",
-            taskId: newTaskId,
-            subtask: { title: subtask.title },
-          },
-        });
-      }
-      const updatedBoard = {
-        ...selectedBoard,
-        columns: selectedBoard.columns.map((column) => {
-          if (column.name === "To Do") {
-            return {
-              ...column,
-              tasks: [
-                ...column.tasks,
-                {
-                  title: newTaskTitle,
-                  description: newTaskDescription,
-                  subtasks: subtasks
-                    .filter((subtask) => subtask.title)
-                    .map((subtask) => ({ ...subtask, title: subtask.title || "Untitled Subtask" })),
-                },
-              ],
-            };
-          }
-          return column;
-        }),
-      };
-      setSelectedBoard(updatedBoard);
       setNewTaskTitle("");
       setNewTaskDescription("");
       setSubtasks([{ title: "" }]); // Reset subtasks

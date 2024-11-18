@@ -23,21 +23,21 @@ const userSchema = new mongoose.Schema({
   password: String,
 });
 
-//Task Schema
+//Subtask Schema
+const subtaskSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true,
+  },
+});
+//Task Scheme
 const taskSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
   },
   description: String,
-  subtasks: [
-    {
-      title: {
-        type: String,
-        required: true,
-      },
-    },
-  ],
+  subtasks: [subtaskSchema],
 });
 
 //Column Schema
@@ -46,15 +46,7 @@ const columnSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  tasks: [
-    {
-      title: {
-        type: String,
-        required: true,
-      },
-      description: String,
-    },
-  ],
+  tasks: [taskSchema],
   board: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Board",
@@ -133,7 +125,7 @@ const typeDefs = gql`
   type Task {
     id: ID!
     title: String!
-    description: String
+    description: String!
     subtasks: [Subtask!]!
   }
 
@@ -143,7 +135,7 @@ const typeDefs = gql`
 
   input TaskInput {
     title: String!
-    description: String
+    description: String!
     subtasks: [SubtaskInput!]!
   }
 
@@ -222,34 +214,62 @@ const resolvers = {
     },
 
     addTaskToColumn: async (_, { boardId, columnName, task }) => {
+      console.log(`addTaskToColumn called with boardId: ${boardId}, columnName: ${columnName}, task: ${JSON.stringify(task, null, 2)}`);
+
       const board = await Board.findById(boardId);
       if (!board) {
+        console.error("Board not found");
         throw new Error("Board not found");
       }
+      console.log(`Board found: ${board.name}`);
 
       const column = board.columns.find((col) => col.name === columnName);
       if (!column) {
+        console.error("Column not found");
         throw new Error("Column not found");
       }
+      console.log(`Column found: ${column.name}`);
 
-      const newTask = { ...task, id: new mongoose.Types.ObjectId(), subtasks: task.subtasks || [] };
+      const newTask = { ...task, subtasks: task.subtasks || [] }; // Ensure subtasks is an array
+      console.log("New Task:", JSON.stringify(newTask, null, 2));
+
       column.tasks.push(newTask);
+
       await board.save();
+      console.log("Board saved successfully");
+
       return board;
     },
 
     createSubtask: async (_, { boardId, columnName, taskId, subtask }) => {
+      console.log(`createSubtask called with boardId: ${boardId}, columnName: ${columnName}, taskId: ${taskId}, subtask: ${JSON.stringify(subtask)}`);
+
       const board = await Board.findById(boardId);
+      if (!board) {
+        throw new Error("Board not found");
+      }
+      console.log(`Board found: ${board.name}`);
+
       const column = board.columns.find((col) => col.name === columnName);
       if (!column) {
         throw new Error("Column not found");
       }
+      console.log(`Column found: ${column.name}`);
+
       const task = column.tasks.id(taskId);
       if (!task) {
         throw new Error("Task not found");
       }
+      console.log(`Task found: ${task.title}`);
+
+      if (!task.subtasks) {
+        task.subtasks = []; // Ensure subtasks array is defined
+      }
+
       task.subtasks.push(subtask);
       await board.save();
+      console.log(`Subtask added: ${subtask.title}`);
+
       return task;
     },
 
