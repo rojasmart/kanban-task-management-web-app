@@ -188,9 +188,9 @@ export default function Home() {
     }
 
     try {
-      // Create the task first
-      const validSubtasks = subtasks.filter((subtask) => subtask.title.trim() !== ""); // Filter valid subtasks
-      console.log("Valid Subtasks:", validSubtasks); // Debugging line
+      const validSubtasks = subtasks.filter((subtask) => subtask.title.trim() !== "");
+      console.log("Valid Subtasks:", validSubtasks);
+
       const taskResponse = await addTaskToColumn({
         variables: {
           boardId: selectedBoard.id,
@@ -198,24 +198,33 @@ export default function Home() {
           task: {
             title: newTaskTitle,
             description: newTaskDescription,
-            subtasks: validSubtasks, // Initially create the task without subtasks
+            subtasks: validSubtasks,
           },
         },
       });
-      console.log("Task Response client:", taskResponse); // Debugging line
 
-      const newTask = taskResponse.data.addTaskToColumn.columns.find((col) => col.name === "To Do").tasks.find((task) => task.title === newTaskTitle);
+      console.log("Task Response:", taskResponse);
 
-      console.log("New Task client:", newTask); // Debugging line
+      const newTask = taskResponse.data?.addTaskToColumn?.columns
+        ?.find((col) => col.name === "To Do")
+        ?.tasks?.find((task) => task.title === newTaskTitle);
 
-      if (!newTask) {
-        console.error("New task not found");
+      if (!newTask || !newTask.id) {
+        console.error("New task not found or newTask.id is null or undefined");
         return;
       }
 
-      // Add subtasks to the newly created task
+      console.log("New Task:", newTask);
+
       for (const subtask of validSubtasks) {
-        console.log("Creating subtask:", subtask); // Debugging line
+        console.log("Creating subtask:", subtask);
+        console.log("Variables:", {
+          boardId: selectedBoard.id,
+          columnName: "To Do",
+          taskId: newTask.id,
+          subtask: { id: subtask.id, title: subtask.title },
+        });
+
         await createSubtask({
           variables: {
             boardId: selectedBoard.id,
@@ -224,7 +233,10 @@ export default function Home() {
             subtask: { title: subtask.title },
           },
         }).catch((error) => {
-          console.error("Error creating subtask:", error); // Debugging line
+          console.error("Error creating subtask:", error);
+          if (error.networkError && error.networkError.result) {
+            console.error("Network error details:", error.networkError.result.errors);
+          }
         });
       }
 

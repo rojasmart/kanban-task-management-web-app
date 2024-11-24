@@ -133,7 +133,7 @@ const typeDefs = gql`
   }
 
   type Subtask {
-    id: ID!
+    id: ID
     title: String!
   }
 
@@ -236,7 +236,7 @@ const resolvers = {
 
       const newTask = {
         ...task,
-        subtasks: task.subtasks ? task.subtasks.map((subtask) => ({ title: subtask.title })) : [],
+        subtasks: task.subtasks ? task.subtasks.map((subtask) => ({ id: new mongoose.Types.ObjectId(), title: subtask.title })) : [],
       };
       console.log("New Task server:", JSON.stringify(newTask, null, 2));
 
@@ -291,7 +291,7 @@ const resolvers = {
         task.subtasks = []; // Initialize the subtasks array if it is undefined
       }
 
-      task.subtasks.push(subtask);
+      task.subtasks.push({ id: new mongoose.Types.ObjectId(), ...subtask });
       await board.save();
       return task;
     },
