@@ -51,6 +51,7 @@ const ADD_TASK_TO_COLUMN_MUTATION = gql`
           title
           description
           subtasks {
+            id
             title
           }
         }
@@ -65,6 +66,7 @@ const CREATE_SUBTASK_MUTATION = gql`
       id
       title
       subtasks {
+        id
         title
       }
     }
@@ -200,7 +202,7 @@ export default function Home() {
           },
         },
       });
-      console.log("Task Response:", taskResponse); // Debugging line
+      console.log("Task Response client:", taskResponse); // Debugging line
 
       const newTask = taskResponse.data.addTaskToColumn.columns.find((col) => col.name === "To Do").tasks.find((task) => task.title === newTaskTitle);
 

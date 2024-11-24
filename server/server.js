@@ -24,12 +24,15 @@ const userSchema = new mongoose.Schema({
 });
 
 //Subtask Schema
-const subtaskSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
+const subtaskSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+    },
   },
-});
+  { _id: true }
+);
 //Task Scheme
 const taskSchema = new mongoose.Schema({
   title: {
@@ -130,6 +133,7 @@ const typeDefs = gql`
   }
 
   type Subtask {
+    id: ID!
     title: String!
   }
 
