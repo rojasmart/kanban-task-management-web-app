@@ -30,6 +30,10 @@ const subtaskSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    completed: {
+      type: Boolean,
+      default: false,
+    },
   },
   { _id: true }
 );
@@ -147,6 +151,7 @@ const typeDefs = gql`
   type Subtask {
     id: ID
     title: String!
+    completed: Boolean!
   }
 
   input TaskInput {
@@ -178,6 +183,7 @@ const typeDefs = gql`
     createSubtask(boardId: ID!, columnName: String!, taskId: ID!, subtask: SubtaskInput!): Task
     createColumn(boardId: ID!, name: String!): Column
     moveTask(boardId: ID!, sourceColumnName: String!, destColumnName: String!, taskIndex: Int!): Board
+    updateSubtaskCompletion(boardId: ID!, columnName: String!, taskId: ID!, subtaskId: ID!, completed: Boolean!): Subtask
   }
 `;
 
@@ -314,6 +320,32 @@ const resolvers = {
       task.subtasks.push({ id: new mongoose.Types.ObjectId(), ...subtask });
       await board.save();
       return task;
+    },
+
+    updateSubtaskCompletion: async (_, { boardId, columnName, taskId, subtaskId, completed }) => {
+      const board = await Board.findById(boardId);
+      if (!board) {
+        throw new Error("Board not found");
+      }
+
+      const column = board.columns.find((col) => col.name === columnName);
+      if (!column) {
+        throw new Error("Column not found");
+      }
+
+      const task = column.tasks.id(taskId);
+      if (!task) {
+        throw new Error("Task not found");
+      }
+
+      const subtask = task.subtasks.id(subtaskId);
+      if (!subtask) {
+        throw new Error("Subtask not found");
+      }
+
+      subtask.completed = completed;
+      await board.save();
+      return subtask;
     },
 
     createColumn: async (_, { boardId, name }) => {

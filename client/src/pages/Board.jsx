@@ -37,6 +37,17 @@ const MOVE_TASK_MUTATION = gql`
     }
   }
 `;
+
+const UPDATE_SUBTASK_COMPLETION_MUTATION = gql`
+  mutation updateSubtaskCompletion($boardId: ID!, $columnName: String!, $taskId: ID!, $subtaskId: ID!, $completed: Boolean!) {
+    updateSubtaskCompletion(boardId: $boardId, columnName: $columnName, taskId: $taskId, subtaskId: $subtaskId, completed: $completed) {
+      id
+      title
+      completed
+    }
+  }
+`;
+
 const Board = ({ board }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
@@ -45,6 +56,7 @@ const Board = ({ board }) => {
   const [selectedTask, setSelectedTask] = useState(null);
   const [createColumn] = useMutation(CREATE_COLUMN_MUTATION);
   const [moveTask] = useMutation(MOVE_TASK_MUTATION);
+  const [updateSubtaskCompletion] = useMutation(UPDATE_SUBTASK_COMPLETION_MUTATION);
 
   useEffect(() => {
     setBoardState(board);
@@ -145,6 +157,29 @@ const Board = ({ board }) => {
   const handleCardClick = (task) => {
     setSelectedTask(task);
     setIsTaskModalOpen(true);
+  };
+
+  const handleSubtaskCompletionChange = async (subtaskIndex) => {
+    const updatedTask = {
+      ...selectedTask,
+      subtasks: selectedTask.subtasks.map((subtask, index) => (index === subtaskIndex ? { ...subtask, completed: !subtask.completed } : subtask)),
+    };
+    setSelectedTask(updatedTask);
+
+    const subtask = updatedTask.subtasks[subtaskIndex];
+    try {
+      await updateSubtaskCompletion({
+        variables: {
+          boardId: board.id,
+          columnName: board.columns.find((col) => col.tasks.some((task) => task.id === selectedTask.id)).name,
+          taskId: selectedTask.id,
+          subtaskId: subtask.id,
+          completed: subtask.completed,
+        },
+      });
+    } catch (error) {
+      console.error("Error updating subtask completion:", error);
+    }
   };
 
   return (
