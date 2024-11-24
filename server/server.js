@@ -95,6 +95,18 @@ const boardSchema = new mongoose.Schema({
             required: true,
           },
           description: String,
+          subtasks: [
+            {
+              title: {
+                type: String,
+                required: true,
+              },
+              _id: {
+                type: mongoose.Schema.Types.ObjectId,
+                default: () => new mongoose.Types.ObjectId(),
+              },
+            },
+          ],
         },
       ],
     },
@@ -269,6 +281,8 @@ const resolvers = {
         }
         return col;
       });
+
+      console.log("Updated Board:", JSON.stringify(updatedBoard, null, 2));
 
       return {
         id: updatedBoard._id.toString(),
