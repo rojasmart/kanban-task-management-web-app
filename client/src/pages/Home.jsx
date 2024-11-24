@@ -184,26 +184,57 @@ export default function Home() {
       console.error("Task title, description, and selected board are required");
       return;
     }
+
     try {
-      const validSubtasks = subtasks.filter((subtask) => subtask.title.trim() !== ""); // Filtra subtasks válidas
-      const response = await addTaskToColumn({
+      // Create the task first
+      const validSubtasks = subtasks.filter((subtask) => subtask.title.trim() !== ""); // Filter valid subtasks
+      console.log("Valid Subtasks:", validSubtasks); // Debugging line
+      const taskResponse = await addTaskToColumn({
         variables: {
-          boardId: selectedBoard.id, // Certifique-se de que selectedBoard.id está definido
+          boardId: selectedBoard.id,
           columnName: "To Do",
           task: {
             title: newTaskTitle,
             description: newTaskDescription,
-            subtasks: validSubtasks, // Inclua apenas subtasks válidas
+            subtasks: validSubtasks, // Initially create the task without subtasks
           },
         },
       });
-      console.log("Task added:", response.data.addTaskToColumn);
+      console.log("Task Response:", taskResponse); // Debugging line
+
+      const newTask = taskResponse.data.addTaskToColumn.columns.find((col) => col.name === "To Do").tasks.find((task) => task.title === newTaskTitle);
+
+      console.log("New Task client:", newTask); // Debugging line
+
+      if (!newTask) {
+        console.error("New task not found");
+        return;
+      }
+
+      // Add subtasks to the newly created task
+      for (const subtask of validSubtasks) {
+        console.log("Creating subtask:", subtask); // Debugging line
+        await createSubtask({
+          variables: {
+            boardId: selectedBoard.id,
+            columnName: "To Do",
+            taskId: newTask.id,
+            subtask: { title: subtask.title },
+          },
+        }).catch((error) => {
+          console.error("Error creating subtask:", error); // Debugging line
+        });
+      }
+
+      console.log("Task and subtasks added successfully");
+
+      // Reset the form
       setNewTaskTitle("");
       setNewTaskDescription("");
-      setSubtasks([{ title: "" }]); // Reset subtasks
+      setSubtasks([{ title: "" }]);
       setIsTaskModalOpen(false);
     } catch (error) {
-      console.error("Error adding task:", error);
+      console.error("Error adding task and subtasks:", error);
     }
   };
 

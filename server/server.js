@@ -123,10 +123,10 @@ const typeDefs = gql`
   }
 
   type Task {
-    id: ID!
+    id: ID
     title: String!
     description: String!
-    subtasks: [Subtask!]!
+    subtasks: [Subtask!]
   }
 
   type Subtask {
@@ -135,8 +135,8 @@ const typeDefs = gql`
 
   input TaskInput {
     title: String!
-    description: String!
-    subtasks: [SubtaskInput!]!
+    description: String
+    subtasks: [SubtaskInput!]
   }
 
   input SubtaskInput {
@@ -230,46 +230,65 @@ const resolvers = {
       }
       console.log(`Column found: ${column.name}`);
 
-      const newTask = { ...task, subtasks: task.subtasks || [] }; // Ensure subtasks is an array
-      console.log("New Task:", JSON.stringify(newTask, null, 2));
+      const newTask = {
+        ...task,
+        subtasks: task.subtasks ? task.subtasks.map((subtask) => ({ title: subtask.title })) : [],
+      };
+      console.log("New Task server:", JSON.stringify(newTask, null, 2));
 
       column.tasks.push(newTask);
 
       await board.save();
       console.log("Board saved successfully");
 
-      return board;
+      // Fetch the updated board to ensure the response is correct
+      const updatedBoard = await Board.findById(boardId).lean();
+      if (!updatedBoard) {
+        console.error("Updated board not found");
+        throw new Error("Updated board not found");
+      }
+
+      updatedBoard.columns = updatedBoard.columns.map((col) => {
+        if (col.name === columnName) {
+          col.tasks = col.tasks.map((t) => {
+            if (t.title === newTask.title) {
+              t.subtasks = newTask.subtasks;
+            }
+            return t;
+          });
+        }
+        return col;
+      });
+
+      return {
+        id: updatedBoard._id.toString(),
+        name: updatedBoard.name,
+        columns: updatedBoard.columns,
+      };
     },
 
     createSubtask: async (_, { boardId, columnName, taskId, subtask }) => {
-      console.log(`createSubtask called with boardId: ${boardId}, columnName: ${columnName}, taskId: ${taskId}, subtask: ${JSON.stringify(subtask)}`);
-
       const board = await Board.findById(boardId);
       if (!board) {
         throw new Error("Board not found");
       }
-      console.log(`Board found: ${board.name}`);
 
       const column = board.columns.find((col) => col.name === columnName);
       if (!column) {
         throw new Error("Column not found");
       }
-      console.log(`Column found: ${column.name}`);
 
       const task = column.tasks.id(taskId);
       if (!task) {
         throw new Error("Task not found");
       }
-      console.log(`Task found: ${task.title}`);
 
       if (!task.subtasks) {
-        task.subtasks = []; // Ensure subtasks array is defined
+        task.subtasks = []; // Initialize the subtasks array if it is undefined
       }
 
       task.subtasks.push(subtask);
       await board.save();
-      console.log(`Subtask added: ${subtask.title}`);
-
       return task;
     },
 
