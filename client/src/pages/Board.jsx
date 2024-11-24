@@ -39,8 +39,10 @@ const MOVE_TASK_MUTATION = gql`
 `;
 const Board = ({ board }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [newColumnName, setNewColumnName] = useState("");
   const [boardState, setBoardState] = useState(board);
+  const [selectedTask, setSelectedTask] = useState(null);
   const [createColumn] = useMutation(CREATE_COLUMN_MUTATION);
   const [moveTask] = useMutation(MOVE_TASK_MUTATION);
 
@@ -140,6 +142,11 @@ const Board = ({ board }) => {
     }
   };
 
+  const handleCardClick = (task) => {
+    setSelectedTask(task);
+    setIsTaskModalOpen(true);
+  };
+
   return (
     <div className="board p-4 mt-16">
       <DragDropContext onDragEnd={onDragEnd}>
@@ -159,13 +166,20 @@ const Board = ({ board }) => {
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
                               className="bg-custom-white shadow-md rounded-lg p-4"
+                              onClick={() => handleCardClick(task)}
                             >
                               <h4 className="font-bold">{task.title}</h4>
                               <p>{task.description}</p>
+
                               {task.subtasks && task.subtasks.length > 0 && (
                                 <ul className="subtasks list-disc pl-5">
                                   {task.subtasks.map((subtask, subtaskIndex) => (
                                     <li key={subtaskIndex} className="subtask">
+                                      <input
+                                        type="checkbox"
+                                        checked={subtask.completed}
+                                        onChange={() => handleSubtaskCompletionChange(taskIndex, subtaskIndex)}
+                                      />
                                       {subtask.title}
                                     </li>
                                   ))}
@@ -208,6 +222,27 @@ const Board = ({ board }) => {
             <button className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6" onClick={handleCreateColumn}>
               Create Column
             </button>
+          </div>
+        </div>
+      )}
+      {isTaskModalOpen && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+          <div className="relative bg-custom-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-lg p-6">
+            <span className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 cursor-pointer" onClick={() => setIsTaskModalOpen(false)}>
+              &times;
+            </span>
+            <h2 className="text-xl font-bold mb-4">{selectedTask.title}</h2>
+            <p>{selectedTask.description}</p>
+            <ul className="subtasks list-disc pl-5">
+              {selectedTask.subtasks &&
+                selectedTask.subtasks.length > 0 &&
+                selectedTask.subtasks.map((subtask, subtaskIndex) => (
+                  <li key={subtaskIndex} className="subtask">
+                    <input type="checkbox" checked={subtask.completed} onChange={() => handleSubtaskCompletionChange(subtaskIndex)} />
+                    {subtask.title}
+                  </li>
+                ))}
+            </ul>
           </div>
         </div>
       )}
