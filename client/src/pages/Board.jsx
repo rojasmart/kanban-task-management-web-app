@@ -4,16 +4,18 @@ import { gql, useMutation } from "@apollo/client";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const CREATE_COLUMN_MUTATION = gql`
-  mutation createColumn($boardId: ID!, $name: String!) {
-    createColumn(boardId: $boardId, name: $name) {
+  mutation createColumn($boardId: ID!, $name: String!, $tasks: [TaskInput!]) {
+    createColumn(boardId: $boardId, name: $name, tasks: $tasks) {
       id
       name
-      description
       columns {
         name
         tasks {
           title
           description
+          subtasks {
+            title
+          }
         }
       }
     }
@@ -54,10 +56,19 @@ const Board = ({ board }) => {
       return;
     }
     try {
+      const initialTasks = [
+        {
+          title: "Sample Task",
+          description: "Sample Description",
+          subtasks: [{ title: "Sample Subtask" }],
+        },
+      ];
+
       const { data } = await createColumn({
         variables: {
-          boardId: board.id,
+          boardId: selectedBoard.id,
           name: newColumnName,
+          tasks: initialTasks,
         },
       });
       console.log("Server response:", data); // Log the server response

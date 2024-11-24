@@ -209,7 +209,13 @@ const resolvers = {
         if (!column.name) {
           throw new Error("Column name is required");
         }
-        return { ...column, tasks: column.tasks || [] }; // Ensure tasks array is initialized
+        return {
+          ...column,
+          tasks: column.tasks.map((task) => ({
+            ...task,
+            subtasks: task.subtasks ? task.subtasks.map((subtask) => ({ id: new mongoose.Types.ObjectId(), title: subtask.title })) : [],
+          })),
+        };
       });
 
       const newBoard = new Board({ name, columns: validColumns });

@@ -16,6 +16,10 @@ const CREATE_BOARD_MUTATION = gql`
         name
         tasks {
           title
+          description
+          subtasks {
+            title
+          }
         }
       }
     }
@@ -27,12 +31,14 @@ const CREATE_COLUMN_MUTATION = gql`
     createColumn(boardId: $boardId, name: $name) {
       id
       name
-      description
       columns {
         name
         tasks {
           title
           description
+          subtasks {
+            title
+          }
         }
       }
     }
@@ -83,6 +89,10 @@ const GET_BOARDS = gql`
         tasks {
           title
           description
+          subtasks {
+            id
+            title
+          }
         }
       }
     }
@@ -230,7 +240,7 @@ export default function Home() {
             boardId: selectedBoard.id,
             columnName: "To Do",
             taskId: newTask.id,
-            subtask: { title: subtask.title },
+            subtask: { id: subtask.id, title: subtask.title },
           },
         }).catch((error) => {
           console.error("Error creating subtask:", error);
