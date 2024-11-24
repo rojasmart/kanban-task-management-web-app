@@ -173,16 +173,11 @@ const Board = ({ board }) => {
 
                               {task.subtasks && task.subtasks.length > 0 && (
                                 <ul className="subtasks list-disc pl-5">
-                                  {task.subtasks.map((subtask, subtaskIndex) => (
-                                    <li key={subtaskIndex} className="subtask">
-                                      <input
-                                        type="checkbox"
-                                        checked={subtask.completed}
-                                        onChange={() => handleSubtaskCompletionChange(taskIndex, subtaskIndex)}
-                                      />
-                                      {subtask.title}
-                                    </li>
-                                  ))}
+                                  {task.subtasks && task.subtasks.length > 0 && (
+                                    <p className="subtasks-count">
+                                      {task.subtasks.filter((subtask) => subtask.completed).length} of {task.subtasks.length} subtasks
+                                    </p>
+                                  )}
                                 </ul>
                               )}
                             </div>
