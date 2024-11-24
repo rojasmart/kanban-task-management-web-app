@@ -162,6 +162,15 @@ const Board = ({ board }) => {
                             >
                               <h4 className="font-bold">{task.title}</h4>
                               <p>{task.description}</p>
+                              {task.subtasks && task.subtasks.length > 0 && (
+                                <ul className="subtasks list-disc pl-5">
+                                  {task.subtasks.map((subtask, subtaskIndex) => (
+                                    <li key={subtaskIndex} className="subtask">
+                                      {subtask.title}
+                                    </li>
+                                  ))}
+                                </ul>
+                              )}
                             </div>
                           )}
                         </Draggable>
