@@ -16,6 +16,7 @@ const CREATE_COLUMN_MUTATION = gql`
           description
           subtasks {
             title
+            completed
           }
         }
       }

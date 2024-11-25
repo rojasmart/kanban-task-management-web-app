@@ -233,7 +233,7 @@ export default function Home() {
           boardId: selectedBoard.id,
           columnName: "To Do",
           taskId: newTask.id,
-          subtask: { id: subtask.id, title: subtask.title },
+          subtask: { id: subtask.id, title: subtask.title, completed: false },
         });
 
         await createSubtask({
@@ -241,7 +241,7 @@ export default function Home() {
             boardId: selectedBoard.id,
             columnName: "To Do",
             taskId: newTask.id,
-            subtask: { id: subtask.id, title: subtask.title },
+            subtask: { id: subtask.id, title: subtask.title, completed: false },
           },
         }).catch((error) => {
           console.error("Error creating subtask:", error);
