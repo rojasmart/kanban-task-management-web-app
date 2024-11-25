@@ -11,6 +11,7 @@ const CREATE_COLUMN_MUTATION = gql`
       columns {
         name
         tasks {
+          id
           title
           description
           subtasks {
@@ -30,6 +31,7 @@ const MOVE_TASK_MUTATION = gql`
       columns {
         name
         tasks {
+          id
           title
           description
         }
@@ -72,6 +74,7 @@ const Board = ({ board }) => {
     try {
       const initialTasks = [
         {
+          id: "1",
           title: "Sample Task",
           description: "Sample Description",
           subtasks: [{ title: "Sample Subtask" }],
@@ -156,10 +159,18 @@ const Board = ({ board }) => {
 
   const handleCardClick = (task) => {
     setSelectedTask(task);
+    console.log("Selected Task:", task);
     setIsTaskModalOpen(true);
   };
 
   const handleSubtaskCompletionChange = async (subtaskIndex) => {
+    console.log("Selected Task:", selectedTask);
+
+    if (!selectedTask || !selectedTask.id) {
+      console.error("Selected task is not set or missing id");
+      return;
+    }
+
     const updatedTask = {
       ...selectedTask,
       subtasks: selectedTask.subtasks.map((subtask, index) => (index === subtaskIndex ? { ...subtask, completed: !subtask.completed } : subtask)),
@@ -167,16 +178,27 @@ const Board = ({ board }) => {
     setSelectedTask(updatedTask);
 
     const subtask = updatedTask.subtasks[subtaskIndex];
+    const columnName = board.columns.find((col) => col.tasks.some((task) => task.id === selectedTask.id)).name;
+
+    console.log("Updating subtask completion with variables:", {
+      boardId: board.id,
+      columnName: columnName,
+      taskId: selectedTask.id,
+      subtaskId: subtask.id,
+      completed: subtask.completed,
+    });
+
     try {
       await updateSubtaskCompletion({
         variables: {
           boardId: board.id,
-          columnName: board.columns.find((col) => col.tasks.some((task) => task.id === selectedTask.id)).name,
+          columnName: columnName,
           taskId: selectedTask.id,
           subtaskId: subtask.id,
           completed: subtask.completed,
         },
       });
+      console.log("Subtask completion updated successfully");
     } catch (error) {
       console.error("Error updating subtask completion:", error);
     }
@@ -202,6 +224,7 @@ const Board = ({ board }) => {
                               {...provided.dragHandleProps}
                               className="bg-custom-white shadow-md rounded-lg p-4"
                               onClick={() => handleCardClick(task)}
+                              data-id={task.id} // Pass the task id here
                             >
                               <h4 className="font-bold">{task.title}</h4>
                               <p>{task.description}</p>

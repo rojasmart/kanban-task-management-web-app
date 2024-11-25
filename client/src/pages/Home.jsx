@@ -87,6 +87,7 @@ const GET_BOARDS = gql`
       columns {
         name
         tasks {
+          id
           title
           description
           subtasks {

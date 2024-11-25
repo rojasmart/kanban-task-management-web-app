@@ -323,29 +323,44 @@ const resolvers = {
     },
 
     updateSubtaskCompletion: async (_, { boardId, columnName, taskId, subtaskId, completed }) => {
-      const board = await Board.findById(boardId);
-      if (!board) {
-        throw new Error("Board not found");
-      }
+      try {
+        console.log(
+          `Updating subtask completion for boardId: ${boardId}, columnName: ${columnName}, taskId: ${taskId}, subtaskId: ${subtaskId}, completed: ${completed}`
+        );
 
-      const column = board.columns.find((col) => col.name === columnName);
-      if (!column) {
-        throw new Error("Column not found");
-      }
+        const board = await Board.findById(boardId);
+        if (!board) {
+          throw new Error("Board not found");
+        }
+        console.log("Board found:", board);
 
-      const task = column.tasks.id(taskId);
-      if (!task) {
-        throw new Error("Task not found");
-      }
+        const column = board.columns.find((col) => col.name === columnName);
+        if (!column) {
+          throw new Error("Column not found");
+        }
+        console.log("Column found:", column);
 
-      const subtask = task.subtasks.id(subtaskId);
-      if (!subtask) {
-        throw new Error("Subtask not found");
-      }
+        const task = column.tasks.id(taskId);
+        if (!task) {
+          throw new Error("Task not found");
+        }
+        console.log("Task found:", task);
 
-      subtask.completed = completed;
-      await board.save();
-      return subtask;
+        const subtask = task.subtasks.id(subtaskId);
+        if (!subtask) {
+          throw new Error("Subtask not found");
+        }
+        console.log("Subtask found:", subtask);
+
+        subtask.completed = completed;
+        await board.save();
+        console.log("Subtask updated and board saved:", subtask);
+
+        return subtask;
+      } catch (error) {
+        console.error("Error updating subtask completion:", error);
+        throw new Error(`Error updating subtask completion: ${error.message}`);
+      }
     },
 
     createColumn: async (_, { boardId, name }) => {
