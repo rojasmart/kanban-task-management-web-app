@@ -18,6 +18,7 @@ const CREATE_BOARD_MUTATION = gql`
           title
           description
           subtasks {
+            id
             title
           }
         }
@@ -34,9 +35,11 @@ const CREATE_COLUMN_MUTATION = gql`
       columns {
         name
         tasks {
+          id
           title
           description
           subtasks {
+            id
             title
           }
         }
@@ -59,6 +62,7 @@ const ADD_TASK_TO_COLUMN_MUTATION = gql`
           subtasks {
             id
             title
+            completed
           }
         }
       }
@@ -74,6 +78,7 @@ const CREATE_SUBTASK_MUTATION = gql`
       subtasks {
         id
         title
+        completed
       }
     }
   }
