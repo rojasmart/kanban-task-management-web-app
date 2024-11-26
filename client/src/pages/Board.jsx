@@ -287,7 +287,7 @@ const Board = ({ board }) => {
             </span>
             <h2 className="text-xl font-bold mb-4">{selectedTask.title}</h2>
             <p>{selectedTask.description}</p>
-            <ul className="subtasks list-disc pl-5">
+            <ul className="subtasks list-none pl-5">
               {selectedTask.subtasks &&
                 selectedTask.subtasks.length > 0 &&
                 selectedTask.subtasks.map((subtask, subtaskIndex) => (
