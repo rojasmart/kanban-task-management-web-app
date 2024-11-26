@@ -84,7 +84,7 @@ const Board = ({ board }) => {
 
       const { data } = await createColumn({
         variables: {
-          boardId: selectedBoard.id,
+          boardId: board.id,
           name: newColumnName,
           tasks: initialTasks,
         },
