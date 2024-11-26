@@ -98,6 +98,7 @@ const GET_BOARDS = gql`
           subtasks {
             id
             title
+            completed
           }
         }
       }
