@@ -4,8 +4,8 @@ import { gql, useMutation } from "@apollo/client";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const CREATE_COLUMN_MUTATION = gql`
-  mutation createColumn($boardId: ID!, $name: String!, $tasks: [TaskInput!]) {
-    createColumn(boardId: $boardId, name: $name, tasks: $tasks) {
+  mutation createColumn($boardId: ID!, $name: String!) {
+    createColumn(boardId: $boardId, name: $name) {
       id
       name
       columns {
@@ -15,8 +15,8 @@ const CREATE_COLUMN_MUTATION = gql`
           title
           description
           subtasks {
+            id
             title
-            completed
           }
         }
       }
