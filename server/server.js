@@ -141,6 +141,7 @@ const typeDefs = gql`
   }
 
   type Column {
+    id: ID
     name: String
     tasks: [Task!]!
   }
@@ -368,6 +369,7 @@ const resolvers = {
     },
 
     createColumn: async (_, { boardId, name }) => {
+      console.log("createColumn called with boardId:", boardId, "name:", name);
       const board = await Board.findById(boardId);
       if (!board) {
         throw new Error("Board not found");

@@ -8,18 +8,6 @@ const CREATE_COLUMN_MUTATION = gql`
     createColumn(boardId: $boardId, name: $name) {
       id
       name
-      columns {
-        name
-        tasks {
-          id
-          title
-          description
-          subtasks {
-            id
-            title
-          }
-        }
-      }
     }
   }
 `;
@@ -86,9 +74,9 @@ const Board = ({ board }) => {
         variables: {
           boardId: board.id,
           name: newColumnName,
-          tasks: initialTasks,
         },
       });
+
       console.log("Server response:", data); // Log the server response
       const newColumn = data.createColumn.columns.at(-1);
 
