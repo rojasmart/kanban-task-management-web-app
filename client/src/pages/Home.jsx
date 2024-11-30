@@ -62,7 +62,6 @@ const ADD_TASK_TO_COLUMN_MUTATION = gql`
           subtasks {
             id
             title
-            completed
           }
         }
       }

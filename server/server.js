@@ -264,6 +264,7 @@ const resolvers = {
       console.log(`Column found: ${column.name}`);
 
       const newTask = {
+        id: new mongoose.Types.ObjectId(),
         ...task,
         subtasks: task.subtasks ? task.subtasks.map((subtask) => ({ id: new mongoose.Types.ObjectId(), title: subtask.title })) : [],
       };
@@ -298,7 +299,13 @@ const resolvers = {
       return {
         id: updatedBoard._id.toString(),
         name: updatedBoard.name,
-        columns: updatedBoard.columns,
+        columns: updatedBoard.columns.map((col) => ({
+          ...col,
+          tasks: col.tasks.map((task) => ({
+            ...task,
+            id: task._id.toString(), // Ensure the id is included in the response
+          })),
+        })),
       };
     },
 
