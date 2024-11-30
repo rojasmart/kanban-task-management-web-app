@@ -40,7 +40,7 @@ function Sidebar({ toggleModal, boards, onSelectBoard }) {
         </div>
 
         <SidebarToggle isOpen={isOpen} toggleSidebar={toggleSidebar} />
-        <div className="theme-toggle-container bg-custom-lightwhite">
+        <div className={`theme-toggle-container ${isDarkMode ? "bg-custom-gray" : "bg-custom-lightwhite"}`}>
           <ThemeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
         </div>
       </div>
