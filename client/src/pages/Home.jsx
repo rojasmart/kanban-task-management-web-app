@@ -166,7 +166,10 @@ export default function Home() {
           task: {
             title: newTaskTitle,
             description: newTaskDescription,
-            subtasks: validSubtasks,
+            subtasks: validSubtasks.map((subtask) => ({
+              title: subtask.title,
+              completed: subtask.completed || false, // Ensure 'completed' field is provided
+            })),
           },
         },
       });
@@ -184,31 +187,9 @@ export default function Home() {
 
       console.log("New Task:", newTask);
 
-      for (const subtask of validSubtasks) {
-        console.log("Creating subtask:", subtask);
-        console.log("Variables:", {
-          boardId: selectedBoard.id,
-          columnName: "To Do",
-          taskId: newTask.id,
-          subtask: { id: subtask.id, title: subtask.title, completed: false },
-        });
-
-        await createSubtask({
-          variables: {
-            boardId: selectedBoard.id,
-            columnName: "To Do",
-            taskId: newTask.id,
-            subtask: { id: subtask.id, title: subtask.title, completed: false },
-          },
-        }).catch((error) => {
-          console.error("Error creating subtask:", error);
-          if (error.networkError && error.networkError.result) {
-            console.error("Network error details:", error.networkError.result.errors);
-          }
-        });
-      }
-
       console.log("Task and subtasks added successfully");
+      // Refetch the board data to update the UI
+      await refetch();
 
       // Reset the form
       setNewTaskTitle("");

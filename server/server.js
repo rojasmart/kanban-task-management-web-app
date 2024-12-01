@@ -167,6 +167,7 @@ const typeDefs = gql`
 
   input SubtaskInput {
     title: String!
+    completed: Boolean!
   }
 
   input ColumnInput {
@@ -266,7 +267,13 @@ const resolvers = {
       const newTask = {
         id: new mongoose.Types.ObjectId(),
         ...task,
-        subtasks: task.subtasks ? task.subtasks.map((subtask) => ({ id: new mongoose.Types.ObjectId(), title: subtask.title })) : [],
+        subtasks: task.subtasks
+          ? task.subtasks.map((subtask) => ({
+              id: new mongoose.Types.ObjectId(),
+              title: subtask.title,
+              completed: subtask.completed || false, // Ensure 'completed' field is provided
+            }))
+          : [],
       };
       console.log("New Task server:", JSON.stringify(newTask, null, 2));
 
