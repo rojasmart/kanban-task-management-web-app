@@ -27,27 +27,6 @@ const CREATE_BOARD_MUTATION = gql`
   }
 `;
 
-const CREATE_COLUMN_MUTATION = gql`
-  mutation createColumn($boardId: ID!, $name: String!) {
-    createColumn(boardId: $boardId, name: $name) {
-      id
-      name
-      columns {
-        name
-        tasks {
-          id
-          title
-          description
-          subtasks {
-            id
-            title
-          }
-        }
-      }
-    }
-  }
-`;
-
 const ADD_TASK_TO_COLUMN_MUTATION = gql`
   mutation addTaskToColumn($boardId: ID!, $columnName: String!, $task: TaskInput!) {
     addTaskToColumn(boardId: $boardId, columnName: $columnName, task: $task) {
@@ -117,7 +96,6 @@ export default function Home() {
   const [newTaskDescription, setNewTaskDescription] = useState("");
   const [subtasks, setSubtasks] = useState([{ title: "" }]);
   const [createBoard] = useMutation(CREATE_BOARD_MUTATION);
-  const [createColumn] = useMutation(CREATE_COLUMN_MUTATION);
   const [createSubtask] = useMutation(CREATE_SUBTASK_MUTATION);
   const [addTaskToColumn] = useMutation(ADD_TASK_TO_COLUMN_MUTATION);
   const { loading, error, data, refetch } = useQuery(GET_BOARDS);
@@ -169,32 +147,6 @@ export default function Home() {
   const handleRemoveColumnName = (index) => {
     const updatedColumnNames = newColumnNames.filter((_, i) => i !== index);
     setNewColumnNames(updatedColumnNames);
-  };
-
-  const handleCreateColumn = async () => {
-    if (!newColumnName) {
-      console.error("Column name is required");
-      return;
-    }
-    try {
-      const { data } = await createColumn({
-        variables: {
-          boardId: selectedBoard.id,
-          name: newColumnName,
-        },
-      });
-      console.log("Server response:", data); // Log the server response
-      const newColumn = data.createColumn.columns.at(-1);
-
-      setBoardState((prevBoard) => ({
-        ...prevBoard,
-        columns: [...prevBoard.columns, newColumn],
-      }));
-      setNewColumnName("");
-      setIsModalOpen(false);
-    } catch (error) {
-      console.error("Error creating column:", error);
-    }
   };
 
   const handleAddTask = async () => {
