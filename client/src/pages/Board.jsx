@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { BsThreeDotsVertical } from "react-icons/bs";
 
 const CREATE_COLUMN_MUTATION = gql`
   mutation createColumn($boardId: ID!, $name: String!) {
@@ -49,11 +50,29 @@ const Board = ({ board }) => {
   const [moveTask] = useMutation(MOVE_TASK_MUTATION);
   const [updateSubtaskCompletion] = useMutation(UPDATE_SUBTASK_COMPLETION_MUTATION);
 
+  const [isMenuVisible, setIsMenuVisible] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuVisible(!isMenuVisible);
+  };
+
   useEffect(() => {
     setBoardState(board);
   }, [board]);
 
   const toggleModal = () => setIsModalOpen(!isModalOpen);
+
+  const handleEditTask = () => {
+    // Implement the logic to edit the selected task
+    console.log("Edit task:", selectedTask);
+    setIsMenuVisible(false);
+  };
+
+  const handleDeleteTask = () => {
+    // Implement the logic to delete the selected task
+    console.log("Delete task:", selectedTask);
+    setIsMenuVisible(false);
+  };
 
   const handleCreateColumn = async () => {
     if (!newColumnName) {
@@ -270,9 +289,21 @@ const Board = ({ board }) => {
       {isTaskModalOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
           <div className="relative bg-custom-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-lg p-6">
-            <span className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 cursor-pointer" onClick={() => setIsTaskModalOpen(false)}>
-              &times;
-            </span>
+            <div className="absolute top-4 right-4">
+              <button onClick={toggleMenu} className="text-3xl">
+                <BsThreeDotsVertical className="text-gray-500 hover:text-gray-700" />
+              </button>
+              {isMenuVisible && (
+                <div className="absolute right-0 mt-2 w-48 bg-custom-white dark:bg-gray-800 shadow-md rounded-md py-1">
+                  <button onClick={handleEditTask} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    Edit Task
+                  </button>
+                  <button onClick={handleDeleteTask} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500">
+                    Delete Task
+                  </button>
+                </div>
+              )}
+            </div>
             <h2 className="text-xl font-bold mb-4">{selectedTask.title}</h2>
             <p>{selectedTask.description}</p>
             <ul className="subtasks list-none pl-5">
