@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import { useTheme } from "../../themeContext";
 
 const CREATE_COLUMN_MUTATION = gql`
   mutation createColumn($boardId: ID!, $name: String!) {
@@ -85,6 +86,8 @@ const Board = ({ board }) => {
   const [deleteTask] = useMutation(DELETE_TASK_MUTATION);
 
   const modalRef = useRef(null);
+
+  const { isDarkMode } = useTheme();
 
   const [isMenuVisible, setIsMenuVisible] = useState(false);
 
@@ -325,13 +328,13 @@ const Board = ({ board }) => {
                   <div className="tasks space-y-4">
                     {column.tasks && column.tasks.length > 0 ? (
                       column.tasks.map((task, taskIndex) => (
-                        <Draggable key={taskIndex} draggableId={`${columnIndex}-${taskIndex}`} index={taskIndex}>
+                        <Draggable key={taskIndex} draggableId={`${columnIndex}-${taskIndex}`} index={taskIndex} cl>
                           {(provided) => (
                             <div
                               ref={provided.innerRef}
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
-                              className="bg-custom-white shadow-md rounded-lg p-4"
+                              className={`${isDarkMode ? "bg-custom-darkgray" : "bg-custom-white"} shadow-md rounded-lg p-4`}
                               onClick={() => handleCardClick(task)}
                               data-id={task.id} // Pass the task id here
                             >
