@@ -399,21 +399,30 @@ const Board = ({ board }) => {
                   <button onClick={handleEditTask} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">
                     Edit Task
                   </button>
-                  <button onClick={handleDeleteTask} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500">
+                  <button onClick={handleDeleteTask} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-custom-red">
                     Delete Task
                   </button>
                 </div>
               )}
             </div>
-            <h2 className="text-xl font-bold mb-4">{selectedTask.title}</h2>
-            <p>{selectedTask.description}</p>
-            <ul className="subtasks list-none pl-5">
+            <h2 className="text-xl font-bold mb-2 mt-2">{selectedTask.title}</h2>
+            <p className="text-md text-custom-lightgray">{selectedTask.description}</p>
+            <p className="text-xs text-custom-lightgray font-semibold mb-2 mt-2">
+              Subtasks ({selectedTask.subtasks.filter((subtask) => subtask.completed).length} of {selectedTask.subtasks.length})
+            </p>
+            <ul className="subtasks list-none">
               {selectedTask.subtasks &&
                 selectedTask.subtasks.length > 0 &&
                 selectedTask.subtasks.map((subtask, subtaskIndex) => (
-                  <li key={subtaskIndex} className="subtask">
-                    <input type="checkbox" checked={subtask.completed} onChange={() => handleSubtaskCompletionChange(subtaskIndex)} />
-                    {subtask.title}
+                  <li key={subtaskIndex} className="subtask bg-custom-lightwhite rounded-lg p-2 mb-2 flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={subtask.completed}
+                      onChange={() => handleSubtaskCompletionChange(subtaskIndex)}
+                      className="mr-2 cursor-pointer"
+                      style={{ width: "15px", height: "15px" }}
+                    />
+                    <p className={`m-0 font-semibold ${subtask.completed ? "line-through" : ""}`}>{subtask.title}</p>
                   </li>
                 ))}
             </ul>
