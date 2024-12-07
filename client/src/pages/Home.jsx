@@ -187,9 +187,25 @@ export default function Home() {
 
       console.log("New Task:", newTask);
 
+      // Update the UI with the new task
+      setSelectedBoard((prevBoard) => {
+        const updatedColumns = prevBoard.columns.map((column) => {
+          if (column.name === "To Do") {
+            return {
+              ...column,
+              tasks: [...column.tasks, newTask],
+            };
+          }
+          return column;
+        });
+
+        return {
+          ...prevBoard,
+          columns: updatedColumns,
+        };
+      });
+
       console.log("Task and subtasks added successfully");
-      // Refetch the board data to update the UI
-      await refetch();
 
       // Reset the form
       setNewTaskTitle("");
