@@ -190,6 +190,8 @@ const typeDefs = gql`
     createColumn(boardId: ID!, name: String!): Column
     moveTask(boardId: ID!, sourceColumnName: String!, destColumnName: String!, taskIndex: Int!): Board
     updateSubtaskCompletion(boardId: ID!, columnName: String!, taskId: ID!, subtaskId: ID!, completed: Boolean!): Subtask
+    updateTask(boardId: ID!, columnName: String!, taskId: ID!, task: TaskInput!): Task
+    deleteTask(boardId: ID!, columnName: String!, taskId: ID!): Board
   }
 `;
 
@@ -410,6 +412,55 @@ const resolvers = {
       const [task] = sourceColumn.tasks.splice(taskIndex, 1);
       destColumn.tasks.push(task);
 
+      await board.save();
+      return board;
+    },
+
+    updateTask: async (_, { boardId, columnName, taskId, task }) => {
+      const board = await Board.findById(boardId);
+      if (!board) {
+        throw new Error("Board not found");
+      }
+
+      const column = board.columns.find((col) => col.name === columnName);
+      if (!column) {
+        throw new Error("Column not found");
+      }
+
+      const existingTask = column.tasks.id(taskId);
+      if (!existingTask) {
+        throw new Error("Task not found");
+      }
+
+      existingTask.title = task.title;
+      existingTask.description = task.description;
+      existingTask.subtasks = task.subtasks.map((subtask) => ({
+        id: subtask.id || new mongoose.Types.ObjectId(),
+        title: subtask.title,
+        completed: subtask.completed,
+      }));
+
+      await board.save();
+      return existingTask;
+    },
+
+    deleteTask: async (_, { boardId, columnName, taskId }) => {
+      const board = await Board.findById(boardId);
+      if (!board) {
+        throw new Error("Board not found");
+      }
+
+      const column = board.columns.find((col) => col.name === columnName);
+      if (!column) {
+        throw new Error("Column not found");
+      }
+
+      const taskIndex = column.tasks.findIndex((task) => task.id.toString() === taskId);
+      if (taskIndex === -1) {
+        throw new Error("Task not found");
+      }
+
+      column.tasks.splice(taskIndex, 1);
       await board.save();
       return board;
     },

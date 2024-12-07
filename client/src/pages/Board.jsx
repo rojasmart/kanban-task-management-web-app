@@ -40,6 +40,38 @@ const UPDATE_SUBTASK_COMPLETION_MUTATION = gql`
   }
 `;
 
+const UPDATE_TASK_MUTATION = gql`
+  mutation updateTask($boardId: ID!, $columnName: String!, $taskId: ID!, $task: TaskInput!) {
+    updateTask(boardId: $boardId, columnName: $columnName, taskId: $taskId, task: $task) {
+      id
+      title
+      description
+      subtasks {
+        id
+        title
+        completed
+      }
+    }
+  }
+`;
+
+const DELETE_TASK_MUTATION = gql`
+  mutation deleteTask($boardId: ID!, $columnName: String!, $taskId: ID!) {
+    deleteTask(boardId: $boardId, columnName: $columnName, taskId: $taskId) {
+      id
+      name
+      columns {
+        name
+        tasks {
+          id
+          title
+          description
+        }
+      }
+    }
+  }
+`;
+
 const Board = ({ board }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
@@ -49,8 +81,11 @@ const Board = ({ board }) => {
   const [createColumn] = useMutation(CREATE_COLUMN_MUTATION);
   const [moveTask] = useMutation(MOVE_TASK_MUTATION);
   const [updateSubtaskCompletion] = useMutation(UPDATE_SUBTASK_COMPLETION_MUTATION);
+  const [updateTask] = useMutation(UPDATE_TASK_MUTATION);
+  const [deleteTask] = useMutation(DELETE_TASK_MUTATION);
 
   const modalRef = useRef(null);
+
   const [isMenuVisible, setIsMenuVisible] = useState(false);
 
   const toggleMenu = () => {
@@ -61,6 +96,7 @@ const Board = ({ board }) => {
     setBoardState(board);
   }, [board]);
 
+  //logic to close the modal when clicked outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
@@ -76,16 +112,67 @@ const Board = ({ board }) => {
 
   const toggleModal = () => setIsModalOpen(!isModalOpen);
 
-  const handleEditTask = () => {
-    // Implement the logic to edit the selected task
-    console.log("Edit task:", selectedTask);
-    setIsMenuVisible(false);
+  const handleEditTask = async () => {
+    if (!selectedTask || !selectedTask.id) {
+      console.error("Selected task is not set or missing id");
+      return;
+    }
+
+    const columnName = board.columns.find((col) => col.tasks.some((task) => task.id === selectedTask.id)).name;
+
+    try {
+      const updatedTask = {
+        title: selectedTask.title,
+        description: selectedTask.description,
+        subtasks: selectedTask.subtasks,
+      };
+
+      await updateTask({
+        variables: {
+          boardId: board.id,
+          columnName: columnName,
+          taskId: selectedTask.id,
+          task: updatedTask,
+        },
+      });
+
+      console.log("Task updated successfully");
+      setIsMenuVisible(false);
+    } catch (error) {
+      console.error("Error updating task:", error);
+    }
   };
 
-  const handleDeleteTask = () => {
-    // Implement the logic to delete the selected task
-    console.log("Delete task:", selectedTask);
-    setIsMenuVisible(false);
+  const handleDeleteTask = async () => {
+    if (!selectedTask || !selectedTask.id) {
+      console.error("Selected task is not set or missing id");
+      return;
+    }
+
+    const columnName = board.columns.find((col) => col.tasks.some((task) => task.id === selectedTask.id)).name;
+
+    try {
+      await deleteTask({
+        variables: {
+          boardId: board.id,
+          columnName: columnName,
+          taskId: selectedTask.id,
+        },
+      });
+
+      console.log("Task deleted successfully");
+      setBoardState((prevBoard) => ({
+        ...prevBoard,
+        columns: prevBoard.columns.map((column) => ({
+          ...column,
+          tasks: column.tasks.filter((task) => task.id !== selectedTask.id),
+        })),
+      }));
+      setIsMenuVisible(false);
+      setIsTaskModalOpen(false);
+    } catch (error) {
+      console.error("Error deleting task:", error);
+    }
   };
 
   const handleCreateColumn = async () => {
