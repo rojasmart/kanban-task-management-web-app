@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { BsThreeDotsVertical } from "react-icons/bs";
@@ -50,6 +50,7 @@ const Board = ({ board }) => {
   const [moveTask] = useMutation(MOVE_TASK_MUTATION);
   const [updateSubtaskCompletion] = useMutation(UPDATE_SUBTASK_COMPLETION_MUTATION);
 
+  const modalRef = useRef(null);
   const [isMenuVisible, setIsMenuVisible] = useState(false);
 
   const toggleMenu = () => {
@@ -59,6 +60,19 @@ const Board = ({ board }) => {
   useEffect(() => {
     setBoardState(board);
   }, [board]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setIsTaskModalOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [modalRef]);
 
   const toggleModal = () => setIsModalOpen(!isModalOpen);
 
@@ -288,7 +302,7 @@ const Board = ({ board }) => {
       )}
       {isTaskModalOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
-          <div className="relative bg-custom-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-lg p-6">
+          <div ref={modalRef} className="relative bg-custom-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-lg p-6">
             <div className="absolute top-4 right-4">
               <button onClick={toggleMenu} className="text-3xl">
                 <BsThreeDotsVertical className="text-gray-500 hover:text-gray-700" />
