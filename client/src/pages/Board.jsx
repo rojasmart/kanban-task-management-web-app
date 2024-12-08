@@ -425,16 +425,18 @@ const Board = ({ board }) => {
             </div>
             {isEditing ? (
               <>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Title</label>
                 <input
                   type="text"
                   value={editableTitle}
                   onChange={(e) => setEditableTitle(e.target.value)}
-                  className="text-xl font-bold mb-2 mt-2 w-full"
+                  className="text-xl font-bold mb-2 mt-2 w-full border border-gray-300 rounded-md p-2"
                 />
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
                 <textarea
                   value={editableDescription}
                   onChange={(e) => setEditableDescription(e.target.value)}
-                  className="text-md text-custom-lightgray w-full"
+                  className="text-md text-custom-lightgray w-full border border-gray-300 rounded-md p-2"
                 />
                 <p className="text-xs text-custom-lightgray font-semibold mb-2 mt-2">
                   Subtasks ({editableSubtasks.filter((subtask) => subtask.completed).length} of {editableSubtasks.length})
@@ -457,7 +459,7 @@ const Board = ({ board }) => {
                           newSubtasks[subtaskIndex].title = e.target.value;
                           setEditableSubtasks(newSubtasks);
                         }}
-                        className={`m-0 font-semibold ${subtask.completed ? "line-through" : ""}`}
+                        className={`m-0 font-semibold ${subtask.completed ? "line-through" : ""} border border-gray-300 rounded-md p-2`}
                       />
                     </li>
                   ))}
@@ -467,9 +469,9 @@ const Board = ({ board }) => {
                     await handleEditTask();
                     setIsEditing(false);
                   }}
-                  className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+                  className="mt-4 bg-custom-blue text-custom-white px-4 py-2 rounded-full"
                 >
-                  Save
+                  Save Changes
                 </button>
               </>
             ) : (
