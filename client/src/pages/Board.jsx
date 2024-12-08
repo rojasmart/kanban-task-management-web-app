@@ -85,6 +85,11 @@ const Board = ({ board }) => {
   const [updateTask] = useMutation(UPDATE_TASK_MUTATION);
   const [deleteTask] = useMutation(DELETE_TASK_MUTATION);
 
+  const [isEditing, setIsEditing] = useState(false);
+  const [editableTitle, setEditableTitle] = useState(selectedTask ? selectedTask.title : "");
+  const [editableDescription, setEditableDescription] = useState(selectedTask ? selectedTask.description : "");
+  const [editableSubtasks, setEditableSubtasks] = useState(selectedTask ? selectedTask.subtasks : []);
+
   const modalRef = useRef(null);
 
   const { isDarkMode } = useTheme();
@@ -125,9 +130,13 @@ const Board = ({ board }) => {
 
     try {
       const updatedTask = {
-        title: selectedTask.title,
-        description: selectedTask.description,
-        subtasks: selectedTask.subtasks,
+        title: editableTitle,
+        description: editableDescription,
+        subtasks: editableSubtasks.map((subtask) => ({
+          id: subtask.id,
+          title: subtask.title,
+          completed: subtask.completed,
+        })),
       };
 
       await updateTask({
@@ -399,7 +408,13 @@ const Board = ({ board }) => {
               </button>
               {isMenuVisible && (
                 <div className="absolute right-0 mt-2 w-48 bg-custom-white dark:bg-gray-800 shadow-md rounded-md py-1">
-                  <button onClick={handleEditTask} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <button
+                    onClick={() => {
+                      setIsEditing(true);
+                      toggleMenu();
+                    }}
+                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
                     Edit Task
                   </button>
                   <button onClick={handleDeleteTask} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-custom-red">
@@ -408,27 +423,78 @@ const Board = ({ board }) => {
                 </div>
               )}
             </div>
-            <h2 className="text-xl font-bold mb-2 mt-2">{selectedTask.title}</h2>
-            <p className="text-md text-custom-lightgray">{selectedTask.description}</p>
-            <p className="text-xs text-custom-lightgray font-semibold mb-2 mt-2">
-              Subtasks ({selectedTask.subtasks.filter((subtask) => subtask.completed).length} of {selectedTask.subtasks.length})
-            </p>
-            <ul className="subtasks list-none">
-              {selectedTask.subtasks &&
-                selectedTask.subtasks.length > 0 &&
-                selectedTask.subtasks.map((subtask, subtaskIndex) => (
-                  <li key={subtaskIndex} className="subtask bg-custom-lightwhite rounded-lg p-2 mb-2 flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={subtask.completed}
-                      onChange={() => handleSubtaskCompletionChange(subtaskIndex)}
-                      className="mr-2 cursor-pointer"
-                      style={{ width: "15px", height: "15px" }}
-                    />
-                    <p className={`m-0 font-semibold ${subtask.completed ? "line-through" : ""}`}>{subtask.title}</p>
-                  </li>
-                ))}
-            </ul>
+            {isEditing ? (
+              <>
+                <input
+                  type="text"
+                  value={editableTitle}
+                  onChange={(e) => setEditableTitle(e.target.value)}
+                  className="text-xl font-bold mb-2 mt-2 w-full"
+                />
+                <textarea
+                  value={editableDescription}
+                  onChange={(e) => setEditableDescription(e.target.value)}
+                  className="text-md text-custom-lightgray w-full"
+                />
+                <p className="text-xs text-custom-lightgray font-semibold mb-2 mt-2">
+                  Subtasks ({editableSubtasks.filter((subtask) => subtask.completed).length} of {editableSubtasks.length})
+                </p>
+                <ul className="subtasks list-none">
+                  {editableSubtasks.map((subtask, subtaskIndex) => (
+                    <li key={subtaskIndex} className="subtask bg-custom-lightwhite rounded-lg p-2 mb-2 flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={subtask.completed}
+                        onChange={() => handleSubtaskCompletionChange(subtaskIndex)}
+                        className="mr-2 cursor-pointer"
+                        style={{ width: "15px", height: "15px" }}
+                      />
+                      <input
+                        type="text"
+                        value={subtask.title}
+                        onChange={(e) => {
+                          const newSubtasks = [...editableSubtasks];
+                          newSubtasks[subtaskIndex].title = e.target.value;
+                          setEditableSubtasks(newSubtasks);
+                        }}
+                        className={`m-0 font-semibold ${subtask.completed ? "line-through" : ""}`}
+                      />
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  onClick={async () => {
+                    await handleEditTask();
+                    setIsEditing(false);
+                  }}
+                  className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+                >
+                  Save
+                </button>
+              </>
+            ) : (
+              <>
+                <h2 className="text-xl font-bold mb-2 mt-2">{selectedTask.title}</h2>
+                <p className="text-md text-custom-lightgray">{selectedTask.description}</p>
+                <p className="text-xs text-custom-lightgray font-semibold mb-2 mt-2">
+                  Subtasks ({selectedTask.subtasks.filter((subtask) => subtask.completed).length} of {selectedTask.subtasks.length})
+                </p>
+                <ul className="subtasks list-none">
+                  {selectedTask.subtasks.map((subtask, subtaskIndex) => (
+                    <li key={subtaskIndex} className="subtask bg-custom-lightwhite rounded-lg p-2 mb-2 flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={subtask.completed}
+                        onChange={() => handleSubtaskCompletionChange(subtaskIndex)}
+                        className="mr-2 cursor-pointer"
+                        style={{ width: "15px", height: "15px" }}
+                      />
+                      <p className={`m-0 font-semibold ${subtask.completed ? "line-through" : ""}`}>{subtask.title}</p>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </div>
         </div>
       )}
