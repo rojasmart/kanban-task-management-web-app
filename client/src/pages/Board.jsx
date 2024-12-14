@@ -292,6 +292,11 @@ const Board = ({ board }) => {
       return;
     }
 
+    //edit the subtask completion locally
+    setEditableSubtasks((prevSubtasks) =>
+      prevSubtasks.map((subtask, index) => (index === subtaskIndex ? { ...subtask, completed: !subtask.completed } : subtask))
+    );
+
     const updatedTask = {
       ...selectedTask,
       subtasks: selectedTask.subtasks.map((subtask, index) => (index === subtaskIndex ? { ...subtask, completed: !subtask.completed } : subtask)),
@@ -411,6 +416,9 @@ const Board = ({ board }) => {
                   <button
                     onClick={() => {
                       setIsEditing(true);
+                      setEditableTitle(selectedTask.title);
+                      setEditableDescription(selectedTask.description);
+                      setEditableSubtasks(selectedTask.subtasks);
                       toggleMenu();
                     }}
                     className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
