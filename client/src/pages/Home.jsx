@@ -90,7 +90,7 @@ export default function Home() {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [boardName, setBoardName] = useState("");
   const [selectedBoard, setSelectedBoard] = useState(null);
-  const [newColumnNames, setNewColumnNames] = useState(["To Do", "Doing"]); // Default columns
+  const [newColumnNames, setNewColumnNames] = useState(["To Do", "Doing"]);
   const [boardState, setBoardState] = useState(selectedBoard);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskDescription, setNewTaskDescription] = useState("");
@@ -126,7 +126,7 @@ export default function Home() {
       console.log("Board created:", response.data.createBoard);
       setIsModalOpen(false);
       setBoardName("");
-      setNewColumnNames(["To Do", "Doing"]); // Reset to default columns
+      setNewColumnNames(["To Do", "Doing"]); // Reset to default values
 
       refetch();
     } catch (error) {
