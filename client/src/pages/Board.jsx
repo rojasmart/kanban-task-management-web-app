@@ -397,6 +397,11 @@ const Board = ({ board }) => {
     setEditableSubtasks([...editableSubtasks, { title: "", completed: false }]);
   };
 
+  const handleRemoveSubtask = (index) => {
+    const newSubtasks = editableSubtasks.filter((_, subtaskIndex) => subtaskIndex !== index);
+    setEditableSubtasks(newSubtasks);
+  };
+
   return (
     <div className="board p-4 mt-16">
       <DragDropContext onDragEnd={onDragEnd}>
@@ -528,6 +533,9 @@ const Board = ({ board }) => {
                         }}
                         className={`m-0 font-semibold ${subtask.completed ? "line-through" : ""} border border-gray-300 rounded-md p-2 w-full`}
                       />
+                      <button onClick={() => handleRemoveSubtask(subtaskIndex)} className="ml-2 text-custom-red">
+                        &times;
+                      </button>
                     </li>
                   ))}
                 </ul>
