@@ -393,6 +393,10 @@ const Board = ({ board }) => {
     }
   };
 
+  const handleAddSubtask = () => {
+    setEditableSubtasks([...editableSubtasks, { title: "", completed: false }]);
+  };
+
   return (
     <div className="board p-4 mt-16">
       <DragDropContext onDragEnd={onDragEnd}>
@@ -527,6 +531,9 @@ const Board = ({ board }) => {
                     </li>
                   ))}
                 </ul>
+                <button onClick={handleAddSubtask} className="mt-2 bg-custom-blue text-custom-white px-4 py-2 rounded-full">
+                  + Add New Subtask
+                </button>
                 <button onClick={handleSaveChanges} className="mt-4 bg-custom-blue text-custom-white px-4 py-2 rounded-full">
                   Save Changes
                 </button>
