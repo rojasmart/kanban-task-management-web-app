@@ -41,6 +41,7 @@ const ADD_TASK_TO_COLUMN_MUTATION = gql`
           subtasks {
             id
             title
+            completed
           }
         }
       }
@@ -95,6 +96,7 @@ export default function Home() {
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskDescription, setNewTaskDescription] = useState("");
   const [subtasks, setSubtasks] = useState([{ title: "" }]);
+  const [selectedColumnName, setSelectedColumnName] = useState(""); // Initialize as empty string
   const [createBoard] = useMutation(CREATE_BOARD_MUTATION);
   const [createSubtask] = useMutation(CREATE_SUBTASK_MUTATION);
   const [addTaskToColumn] = useMutation(ADD_TASK_TO_COLUMN_MUTATION);
@@ -103,6 +105,9 @@ export default function Home() {
   const toggleTaskModal = () => setIsTaskModalOpen(!isTaskModalOpen);
 
   useEffect(() => {
+    if (selectedBoard && selectedBoard.columns.length > 0) {
+      setSelectedColumnName(selectedBoard.columns[0].name); // Set default column name
+    }
     setBoardState(selectedBoard);
   }, [selectedBoard]);
 
@@ -162,7 +167,7 @@ export default function Home() {
       const taskResponse = await addTaskToColumn({
         variables: {
           boardId: selectedBoard.id,
-          columnName: "To Do",
+          columnName: selectedColumnName, // Use the selected column name here
           task: {
             title: newTaskTitle,
             description: newTaskDescription,
@@ -177,7 +182,7 @@ export default function Home() {
       console.log("Task Response:", taskResponse);
 
       const newTask = taskResponse.data?.addTaskToColumn?.columns
-        ?.find((col) => col.name === "To Do")
+        ?.find((col) => col.name === selectedColumnName) // Use the selected column name here
         ?.tasks?.find((task) => task.title === newTaskTitle);
 
       if (!newTask || !newTask.id) {
@@ -190,7 +195,8 @@ export default function Home() {
       // Update the UI with the new task
       setSelectedBoard((prevBoard) => {
         const updatedColumns = prevBoard.columns.map((column) => {
-          if (column.name === "To Do") {
+          if (column.name === selectedColumnName) {
+            // Use the selected column name here
             return {
               ...column,
               tasks: [...column.tasks, newTask],
@@ -354,6 +360,20 @@ export default function Home() {
                   <button className="w-full bg-custom-lightwhite text-custom-blue rounded-full p-3 pl-6 pr-6" onClick={handleAddSubtask}>
                     + Add Subtask
                   </button>
+                </label>
+                <label className="block mb-2 text-sm font-medium text-gray-700">
+                  Column
+                  <select
+                    className="w-full p-2 border border-gray-300 rounded mb-4"
+                    value={selectedColumnName}
+                    onChange={(e) => setSelectedColumnName(e.target.value)}
+                  >
+                    {selectedBoard?.columns.map((column) => (
+                      <option key={column.name} value={column.name}>
+                        {column.name}
+                      </option>
+                    ))}
+                  </select>
                 </label>
                 <button className="w-full bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6" onClick={handleAddTask}>
                   Create Task
