@@ -330,6 +330,69 @@ const Board = ({ board }) => {
     }
   };
 
+  const handleEditButtonClick = () => {
+    setIsEditing(true);
+    setEditableTitle(selectedTask.title);
+    setEditableDescription(selectedTask.description);
+    setEditableSubtasks(selectedTask.subtasks);
+    toggleMenu();
+  };
+
+  const handleSaveChanges = async () => {
+    if (!selectedTask || !selectedTask.id) {
+      console.error("Selected task is not set or missing id");
+      return;
+    }
+
+    const columnName = board.columns.find((col) => col.tasks.some((task) => task.id === selectedTask.id)).name;
+
+    const stripTypename = (subtasks) => {
+      return subtasks.map(({ __typename, ...subtask }) => subtask);
+    };
+
+    const updatedTask = {
+      title: editableTitle,
+      description: editableDescription,
+      subtasks: stripTypename(editableSubtasks),
+    };
+
+    try {
+      const { data } = await updateTask({
+        variables: {
+          boardId: board.id,
+          columnName: columnName,
+          taskId: selectedTask.id,
+          task: updatedTask,
+        },
+      });
+
+      console.log("Task updated successfully", data);
+
+      // Update the local state with the updated task
+      setBoardState((prevBoard) => {
+        const updatedColumns = prevBoard.columns.map((column) => {
+          if (column.name === columnName) {
+            return {
+              ...column,
+              tasks: column.tasks.map((task) => (task.id === selectedTask.id ? { ...task, ...updatedTask } : task)),
+            };
+          }
+          return column;
+        });
+
+        return {
+          ...prevBoard,
+          columns: updatedColumns,
+        };
+      });
+
+      setIsEditing(false);
+      setIsTaskModalOpen(false);
+    } catch (error) {
+      console.error("Error updating task:", error);
+    }
+  };
+
   return (
     <div className="board p-4 mt-16">
       <DragDropContext onDragEnd={onDragEnd}>
@@ -413,16 +476,7 @@ const Board = ({ board }) => {
               </button>
               {isMenuVisible && (
                 <div className="absolute right-0 mt-2 w-48 bg-custom-white dark:bg-gray-800 shadow-md rounded-md py-1">
-                  <button
-                    onClick={() => {
-                      setIsEditing(true);
-                      setEditableTitle(selectedTask.title);
-                      setEditableDescription(selectedTask.description);
-                      setEditableSubtasks(selectedTask.subtasks);
-                      toggleMenu();
-                    }}
-                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
+                  <button onClick={handleEditButtonClick} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">
                     Edit Task
                   </button>
                   <button onClick={handleDeleteTask} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-custom-red">
@@ -463,8 +517,9 @@ const Board = ({ board }) => {
                         type="text"
                         value={subtask.title}
                         onChange={(e) => {
-                          const newSubtasks = [...editableSubtasks];
-                          newSubtasks[subtaskIndex].title = e.target.value;
+                          const newSubtasks = editableSubtasks.map((subtask, index) =>
+                            index === subtaskIndex ? { ...subtask, title: e.target.value } : subtask
+                          );
                           setEditableSubtasks(newSubtasks);
                         }}
                         className={`m-0 font-semibold ${subtask.completed ? "line-through" : ""} border border-gray-300 rounded-md p-2 w-full`}
@@ -472,13 +527,7 @@ const Board = ({ board }) => {
                     </li>
                   ))}
                 </ul>
-                <button
-                  onClick={async () => {
-                    await handleEditTask();
-                    setIsEditing(false);
-                  }}
-                  className="mt-4 bg-custom-blue text-custom-white px-4 py-2 rounded-full"
-                >
+                <button onClick={handleSaveChanges} className="mt-4 bg-custom-blue text-custom-white px-4 py-2 rounded-full">
                   Save Changes
                 </button>
               </>

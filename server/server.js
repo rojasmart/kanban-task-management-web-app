@@ -166,6 +166,7 @@ const typeDefs = gql`
   }
 
   input SubtaskInput {
+    id: ID
     title: String!
     completed: Boolean!
   }
