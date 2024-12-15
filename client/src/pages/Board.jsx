@@ -402,6 +402,56 @@ const Board = ({ board }) => {
     setEditableSubtasks(newSubtasks);
   };
 
+  const handleMoveTask = async (destColumnName) => {
+    if (!selectedTask || !selectedTask.id || !destColumnName) {
+      console.error("Selected task or destination column is not set");
+      return;
+    }
+
+    const sourceColumnName = board.columns.find((col) => col.tasks.some((task) => task.id === selectedTask.id)).name;
+
+    try {
+      await moveTask({
+        variables: {
+          boardId: board.id,
+          sourceColumnName: sourceColumnName,
+          destColumnName: destColumnName,
+          taskIndex: board.columns.find((col) => col.name === sourceColumnName).tasks.findIndex((task) => task.id === selectedTask.id),
+        },
+      });
+
+      // Update the local state to reflect the change
+      setBoardState((prevBoard) => {
+        const sourceColumn = prevBoard.columns.find((col) => col.name === sourceColumnName);
+        const destColumn = prevBoard.columns.find((col) => col.name === destColumnName);
+        const task = sourceColumn.tasks.find((task) => task.id === selectedTask.id);
+
+        return {
+          ...prevBoard,
+          columns: prevBoard.columns.map((col) => {
+            if (col.name === sourceColumnName) {
+              return {
+                ...col,
+                tasks: col.tasks.filter((task) => task.id !== selectedTask.id),
+              };
+            }
+            if (col.name === destColumnName) {
+              return {
+                ...col,
+                tasks: [...col.tasks, task],
+              };
+            }
+            return col;
+          }),
+        };
+      });
+
+      setIsTaskModalOpen(false);
+    } catch (error) {
+      console.error("Error moving task:", error);
+    }
+  };
+
   return (
     <div className="board p-4 mt-16">
       <DragDropContext onDragEnd={onDragEnd}>
@@ -567,6 +617,20 @@ const Board = ({ board }) => {
                     </li>
                   ))}
                 </ul>
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Move to Column</label>
+                  <select
+                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                    onChange={(e) => handleMoveTask(e.target.value)}
+                  >
+                    <option value="">Select Column</option>
+                    {board.columns.map((column) => (
+                      <option key={column.name} value={column.name}>
+                        {column.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </>
             )}
           </div>
