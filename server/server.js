@@ -466,6 +466,9 @@ const resolvers = {
       return board;
     },
   },
+  Column: {
+    tasks: (parent) => parent.tasks || [],
+  },
 };
 
 const getUser = async (token) => {
