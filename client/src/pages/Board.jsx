@@ -460,7 +460,7 @@ const Board = ({ board }) => {
             <Droppable key={columnIndex} droppableId={`${columnIndex}`}>
               {(provided) => (
                 <div ref={provided.innerRef} {...provided.droppableProps} className="column flex-shrink-0 w-64 bg-gray-100 p-4 rounded-lg">
-                  <h4 className="text-md font-bold mb-4 text-custom-lightgray">
+                  <h4 className="text-md font-bold mb-3 text-custom-lightgray">
                     {column.name}({column.tasks.length})
                   </h4>
                   <div className="tasks space-y-4">
@@ -500,7 +500,8 @@ const Board = ({ board }) => {
               )}
             </Droppable>
           ))}
-          <div className="column h-full flex-shrink-0 w-64 bg-custom-darkwhite p-4 rounded-lg flex items-center justify-center mt-12 overflow-hidden">
+
+          <div className="column h-full flex-shrink-0 w-64 bg-custom-darkwhite rounded-lg flex items-center justify-center mt-12 overflow-hidden">
             <p className="text-custom-lightgray text-2xl cursor-pointer font-semibold" onClick={toggleModal}>
               + New column
             </p>
@@ -614,14 +615,14 @@ const Board = ({ board }) => {
                         className="mr-2 cursor-pointer"
                         style={{ width: "15px", height: "15px" }}
                       />
-                      <p className={`m-0 font-semibold ${subtask.completed ? "line-through" : ""}`}>{subtask.title}</p>
+                      <p className={`m-0 text-xs font-semibold ${subtask.completed ? "line-through" : ""}`}>{subtask.title}</p>
                     </li>
                   ))}
                 </ul>
                 <div className="mt-4">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Move to Column</label>
+                  <label className="text-xs text-custom-lightgray font-semibold">Current Status</label>
                   <select
-                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                    className="cursor-pointer mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
                     onChange={(e) => handleMoveTask(e.target.value)}
                   >
                     <option value="">Select Column</option>
