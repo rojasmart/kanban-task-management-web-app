@@ -53,7 +53,10 @@ const columnSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  tasks: [taskSchema],
+  tasks: {
+    type: [taskSchema],
+    default: [], // Ensure tasks is always an array
+  },
   board: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Board",
