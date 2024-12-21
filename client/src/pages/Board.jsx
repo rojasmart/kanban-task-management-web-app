@@ -455,7 +455,7 @@ const Board = ({ board }) => {
   return (
     <div className="board p-4 mt-16">
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="columns flex space-x-4 overflow-x-auto h-screen">
+        <div className="columns flex space-x-4 h-screen">
           {boardState.columns.map((column, columnIndex) => (
             <Droppable key={columnIndex} droppableId={`${columnIndex}`}>
               {(provided) => (
@@ -500,7 +500,7 @@ const Board = ({ board }) => {
               )}
             </Droppable>
           ))}
-          <div className="column h-full flex-shrink-0 w-64 bg-custom-darkwhite p-4 rounded-lg flex items-center justify-center">
+          <div className="column h-full flex-shrink-0 w-64 bg-custom-darkwhite p-4 rounded-lg flex items-center justify-center mt-12 overflow-hidden">
             <p className="text-custom-lightgray text-2xl cursor-pointer font-semibold" onClick={toggleModal}>
               + New column
             </p>
