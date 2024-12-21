@@ -553,13 +553,13 @@ const Board = ({ board }) => {
                   type="text"
                   value={editableTitle}
                   onChange={(e) => setEditableTitle(e.target.value)}
-                  className="text-xl font-bold mb-2 mt-2 w-full border border-gray-300 rounded-md p-2"
+                  className="text-sm font-bold mb-2 mt-2 w-full border border-gray-300 rounded-md p-2"
                 />
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
                 <textarea
                   value={editableDescription}
                   onChange={(e) => setEditableDescription(e.target.value)}
-                  className="text-md text-custom-lightgray w-full border border-gray-300 rounded-md p-2"
+                  className="text-sm text-custom-lightgray w-full border border-gray-300 rounded-md p-2"
                 />
                 <p className="text-xs text-custom-lightgray font-semibold mb-2 mt-2">
                   Subtasks ({editableSubtasks.filter((subtask) => subtask.completed).length} of {editableSubtasks.length})
@@ -571,7 +571,7 @@ const Board = ({ board }) => {
                         type="checkbox"
                         checked={subtask.completed}
                         onChange={() => handleSubtaskCompletionChange(subtaskIndex)}
-                        className="mr-2 cursor-pointer"
+                        className="mr-2 cursor-pointer "
                         style={{ width: "15px", height: "15px" }}
                       />
                       <input
@@ -583,7 +583,9 @@ const Board = ({ board }) => {
                           );
                           setEditableSubtasks(newSubtasks);
                         }}
-                        className={`m-0 font-semibold ${subtask.completed ? "line-through" : ""} border border-gray-300 rounded-md p-2 w-full`}
+                        className={`m-0 text-xs font-semibold ${
+                          subtask.completed ? "line-through" : ""
+                        } border border-gray-300 rounded-md p-2 w-full`}
                       />
                       <button onClick={() => handleRemoveSubtask(subtaskIndex)} className="ml-2 text-custom-red">
                         &times;
@@ -591,10 +593,10 @@ const Board = ({ board }) => {
                     </li>
                   ))}
                 </ul>
-                <button onClick={handleAddSubtask} className="mt-2 bg-custom-blue text-custom-white px-4 py-2 rounded-full">
+                <button onClick={handleAddSubtask} className="mt-2 bg-custom-blue text-custom-white px-4 py-2 rounded-full w-full block">
                   + Add New Subtask
                 </button>
-                <button onClick={handleSaveChanges} className="mt-4 bg-custom-blue text-custom-white px-4 py-2 rounded-full">
+                <button onClick={handleSaveChanges} className="mt-4 bg-custom-blue text-custom-white px-4 py-2 rounded-full w-full block">
                   Save Changes
                 </button>
               </>
