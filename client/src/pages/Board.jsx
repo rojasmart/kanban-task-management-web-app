@@ -475,12 +475,11 @@ const Board = ({ board }) => {
                               data-id={task.id} // Pass the task id here
                             >
                               <h4 className="font-bold">{task.title}</h4>
-                              <p>{task.description}</p>
 
                               {task.subtasks && task.subtasks.length > 0 && (
-                                <ul className="subtasks list-disc pl-5">
+                                <ul className="subtasks list-disc mt-2">
                                   {task.subtasks && task.subtasks.length > 0 && (
-                                    <p className="subtasks-count">
+                                    <p className="subtasks-count text-xs text-custom-lightgray font-semibold">
                                       {task.subtasks.filter((subtask) => subtask.completed).length} of {task.subtasks.length} subtasks
                                     </p>
                                   )}
