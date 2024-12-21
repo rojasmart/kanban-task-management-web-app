@@ -460,7 +460,9 @@ const Board = ({ board }) => {
             <Droppable key={columnIndex} droppableId={`${columnIndex}`}>
               {(provided) => (
                 <div ref={provided.innerRef} {...provided.droppableProps} className="column flex-shrink-0 w-64 bg-gray-100 p-4 rounded-lg">
-                  <h3 className="text-xl font-bold mb-4">{column.name}</h3>
+                  <h4 className="text-md font-bold mb-4 text-custom-lightgray">
+                    {column.name}({column.tasks.length})
+                  </h4>
                   <div className="tasks space-y-4">
                     {column.tasks && column.tasks.length > 0 ? (
                       column.tasks.map((task, taskIndex) => (
