@@ -75,6 +75,7 @@ const DELETE_TASK_MUTATION = gql`
 
 const Board = ({ board }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [newColumnName, setNewColumnName] = useState("");
   const [boardState, setBoardState] = useState(board);
@@ -155,7 +156,12 @@ const Board = ({ board }) => {
     }
   };
 
-  const handleDeleteTask = async () => {
+  const handleDeleteTask = () => {
+    setIsModalDeleteOpen(true);
+    isTaskModalOpen && setIsTaskModalOpen(false);
+  };
+
+  const confirmDeleteTask = async () => {
     if (!selectedTask || !selectedTask.id) {
       console.error("Selected task is not set or missing id");
       return;
@@ -185,6 +191,12 @@ const Board = ({ board }) => {
     } catch (error) {
       console.error("Error deleting task:", error);
     }
+    setIsModalDeleteOpen(false);
+  };
+
+  const cancelDeleteTask = () => {
+    setIsModalDeleteOpen(false);
+    setIsMenuVisible(false);
   };
 
   const handleCreateColumn = async () => {
@@ -546,6 +558,7 @@ const Board = ({ board }) => {
                 </div>
               )}
             </div>
+
             {isEditing ? (
               <>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Title</label>
@@ -637,6 +650,27 @@ const Board = ({ board }) => {
                 </div>
               </>
             )}
+          </div>
+        </div>
+      )}
+      {isModalDeleteOpen && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+          <div className="relative bg-custom-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-lg p-6">
+            <button onClick={cancelDeleteTask} className="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
+              &times;
+            </button>
+            <h4 className="text-md font-bold mb-4 text-custom-red">Delete Task</h4>
+            <p className="mb-4 text-sm text-custom-lightgray">
+              Are you sure you want to delete this board? This action will remove all columns and tasks and cannot be reversed.
+            </p>
+            <div className="flex justify-end space-x-4">
+              <button onClick={confirmDeleteTask} className="px-4 py-2 bg-custom-red text-custom-white font-bold  rounded-full w-full block">
+                Delete
+              </button>
+              <button onClick={cancelDeleteTask} className="px-4 py-2 bg-custom-darkwhite text-custom-blue font-bold rounded-full w-full block">
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
