@@ -561,20 +561,20 @@ const Board = ({ board }) => {
 
             {isEditing ? (
               <>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Title</label>
+                <label className="block text-sm font-bold text-custom-lightgray">Title</label>
                 <input
                   type="text"
                   value={editableTitle}
                   onChange={(e) => setEditableTitle(e.target.value)}
-                  className="text-sm font-bold mb-2 mt-2 w-full border border-gray-300 rounded-md p-2"
+                  className="text-xs mb-2 mt-2 w-full border border-custom-darkwhite rounded-md p-2  focus:border-custom-blue focus:outline-none focus:border-2"
                 />
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+                <label className="block text-sm font-bold text-custom-lightgray">Description</label>
                 <textarea
                   value={editableDescription}
                   onChange={(e) => setEditableDescription(e.target.value)}
-                  className="text-sm text-custom-lightgray w-full border border-gray-300 rounded-md p-2"
+                  className="text-sm  mt-2 w-full border border-custom-darkwhite focus:border-custom-blue focus:outline-none focus:border-2 rounded-md p-2"
                 />
-                <p className="text-xs text-custom-lightgray font-semibold mb-2 mt-2">
+                <p className="text-sm text-custom-lightgray font-semibold mb-2 mt-2">
                   Subtasks ({editableSubtasks.filter((subtask) => subtask.completed).length} of {editableSubtasks.length})
                 </p>
                 <ul className="subtasks list-none">
@@ -596,9 +596,9 @@ const Board = ({ board }) => {
                           );
                           setEditableSubtasks(newSubtasks);
                         }}
-                        className={`m-0 text-xs font-semibold ${
+                        className={`m-0 text-xs ${
                           subtask.completed ? "line-through" : ""
-                        } border border-gray-300 rounded-md p-2 w-full`}
+                        } border border-custom-darkwhite focus:border-custom-blue focus:outline-none focus:border-2 rounded-md p-2 w-full`}
                       />
                       <button onClick={() => handleRemoveSubtask(subtaskIndex)} className="ml-2 text-custom-red">
                         &times;
