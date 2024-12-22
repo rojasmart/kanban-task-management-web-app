@@ -318,60 +318,55 @@ export default function Home() {
                   &times;
                 </span>
                 <h2 className="text-xl font-bold mb-4">Add New Task</h2>
-                <label className="block mb-2 text-sm font-medium text-gray-700">
-                  Title
-                  <input
-                    type="text"
-                    className="w-full p-2 border border-gray-300 rounded mb-4"
-                    placeholder="e.g. Take Coffee Break"
-                    value={newTaskTitle}
-                    onChange={(e) => setNewTaskTitle(e.target.value)}
-                  />
-                </label>
-                <label className="block mb-2 text-sm font-medium text-gray-700">
-                  Description
-                  <textarea
-                    className="w-full p-2 border border-gray-300 rounded mb-4"
-                    placeholder="e.g. It’s always good to take a break. This 15 minute break will recharge the batteries a little."
-                    value={newTaskDescription}
-                    onChange={(e) => setNewTaskDescription(e.target.value)}
-                  />
-                </label>
-                <label className="block mb-2 text-sm font-medium text-gray-700">
-                  Subtasks
-                  {subtasks.map((subtask, index) => (
-                    <div key={index} className="flex items-center mb-2">
-                      <input
-                        type="text"
-                        className="w-full p-2 border border-gray-300 rounded"
-                        placeholder={`Subtask ${index + 1}`}
-                        value={subtask.title}
-                        onChange={(e) => handleSubtaskChange(index, e.target.value)}
-                      />
-                      <button className="ml-2 text-red-500 hover:text-red-700" onClick={() => handleRemoveSubtask(index)}>
-                        &times;
-                      </button>
-                    </div>
+                <label className="block mb-2 text-xs font-bold text-custom-lightgray">Title</label>
+                <input
+                  type="text"
+                  className="w-full text-xs p-2 border border-custom-darkwhite focus:border-custom-blue focus:outline-none focus:border-2 rounded mb-4"
+                  placeholder="e.g. Take Coffee Break"
+                  value={newTaskTitle}
+                  onChange={(e) => setNewTaskTitle(e.target.value)}
+                />
+                <label className="block mb-2 text-xs font-bold text-custom-lightgray">Description</label>
+                <textarea
+                  className="w-full text-xs p-2 border border-custom-darkwhite focus:border-custom-blue focus:outline-none focus:border-2 rounded mb-4"
+                  placeholder="e.g. It’s always good to take a break. This 15 minute break will recharge the batteries a little."
+                  value={newTaskDescription}
+                  onChange={(e) => setNewTaskDescription(e.target.value)}
+                />
+                <label className="block mb-2 text-xs font-bold text-custom-lightgray">Subtasks</label>
+                {subtasks.map((subtask, index) => (
+                  <div key={index} className="flex items-center mb-2">
+                    <input
+                      type="text"
+                      className="w-full p-2 text-xs border border-custom-darkwhite focus:border-custom-blue focus:outline-none focus:border-2 rounded"
+                      placeholder={`Subtask ${index + 1}`}
+                      value={subtask.title}
+                      onChange={(e) => handleSubtaskChange(index, e.target.value)}
+                    />
+                    <button className="ml-2 text-red-500 hover:text-red-700" onClick={() => handleRemoveSubtask(index)}>
+                      &times;
+                    </button>
+                  </div>
+                ))}
+                <button
+                  className="w-full font-bold bg-custom-lightwhite text-custom-blue rounded-full p-3 pl-6 pr-6 mt-4 mb-4"
+                  onClick={handleAddSubtask}
+                >
+                  + Add Subtask
+                </button>
+                <label className="block mb-2 text-xs font-bold text-custom-lightgray">Column</label>
+                <select
+                  className="cursor-pointer w-full text-xs p-2 border border-custom-darkwhite focus:border-custom-blue focus:outline-none focus:border-2 rounded mb-4"
+                  value={selectedColumnName}
+                  onChange={(e) => setSelectedColumnName(e.target.value)}
+                >
+                  {selectedBoard?.columns.map((column) => (
+                    <option key={column.name} value={column.name}>
+                      {column.name}
+                    </option>
                   ))}
-                  <button className="w-full bg-custom-lightwhite text-custom-blue rounded-full p-3 pl-6 pr-6" onClick={handleAddSubtask}>
-                    + Add Subtask
-                  </button>
-                </label>
-                <label className="block mb-2 text-sm font-medium text-gray-700">
-                  Column
-                  <select
-                    className="w-full p-2 border border-gray-300 rounded mb-4"
-                    value={selectedColumnName}
-                    onChange={(e) => setSelectedColumnName(e.target.value)}
-                  >
-                    {selectedBoard?.columns.map((column) => (
-                      <option key={column.name} value={column.name}>
-                        {column.name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <button className="w-full bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6" onClick={handleAddTask}>
+                </select>
+                <button className="w-full font-bold bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6" onClick={handleAddTask}>
                   Create Task
                 </button>
               </div>
