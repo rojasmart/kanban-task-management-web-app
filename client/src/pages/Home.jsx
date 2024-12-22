@@ -276,38 +276,34 @@ export default function Home() {
                   &times;
                 </span>
                 <h2 className="text-xl font-bold mb-4">Add New Board</h2>
-                <label className="block mb-2 text-sm font-medium text-gray-700">
-                  Board Name
-                  <input
-                    type="text"
-                    className="w-full p-2 border border-gray-300 rounded mb-4"
-                    placeholder="e.g. Webdevelopment"
-                    value={boardName}
-                    onChange={(e) => setBoardName(e.target.value)}
-                  />
-                </label>
-                <label className="block mb-2 text-sm font-medium text-gray-700">
-                  Board Columns
-                  {newColumnNames.map((name, index) => (
-                    <div key={index} className="flex items-center mb-4">
-                      <input
-                        type="text"
-                        className="w-full p-2 border border-gray-300 rounded"
-                        placeholder={`Column ${index + 1}`}
-                        value={name}
-                        onChange={(e) => handleColumnNameChange(index, e.target.value)}
-                      />
-                      <button className="ml-2 text-red-500 hover:text-red-700" onClick={() => handleRemoveColumnName(index)}>
-                        &times;
-                      </button>
-                    </div>
-                  ))}
-                  <button className="w-full bg-custom-lightwhite text-custom-blue rounded-full p-3 pl-6 pr-6" onClick={handleAddColumnName}>
-                    + Add New Column
-                  </button>
-                </label>
+                <label className="block mb-2 text-xs font-bold text-custom-lightgray">Board Name</label>
+                <input
+                  type="text"
+                  className="text-xs w-full p-2 border border-custom-darkwhite rounded focus:border-custom-blue focus:outline-none focus:border-2 mb-4"
+                  placeholder="e.g. Webdevelopment"
+                  value={boardName}
+                  onChange={(e) => setBoardName(e.target.value)}
+                />
+                <label className="block mb-2 text-xs font-bold text-custom-lightgray">Board Columns</label>
+                {newColumnNames.map((name, index) => (
+                  <div key={index} className="flex items-center mb-4">
+                    <input
+                      type="text"
+                      className="text-xs w-full p-2 border border-custom-darkwhite focus:border-custom-blue focus:outline-none focus:border-2 rounded"
+                      placeholder={`Column ${index + 1}`}
+                      value={name}
+                      onChange={(e) => handleColumnNameChange(index, e.target.value)}
+                    />
+                    <button className="ml-2 text-red-500 hover:text-red-700" onClick={() => handleRemoveColumnName(index)}>
+                      &times;
+                    </button>
+                  </div>
+                ))}
+                <button className="w-full bg-custom-lightwhite text-custom-blue rounded-full p-3 pl-6 pr-6" onClick={handleAddColumnName}>
+                  + Add New Column
+                </button>
                 <div className="space-y-4">
-                  <button className="w-full bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6" onClick={handleCreateBoard}>
+                  <button className="w-full bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6 mt-4" onClick={handleCreateBoard}>
                     Create New Board
                   </button>
                 </div>
