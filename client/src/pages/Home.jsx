@@ -313,11 +313,13 @@ export default function Home() {
 
           {isTaskModalOpen && (
             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
-              <div className="relative bg-custom-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-lg p-6">
+              <div
+                className={`${isDarkMode ? "bg-custom-gray" : "bg-custom-white"} relative dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-lg p-6`}
+              >
                 <span className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 cursor-pointer" onClick={toggleTaskModal}>
                   &times;
                 </span>
-                <h2 className="text-xl font-bold mb-4">Add New Task</h2>
+                <h2 className={`${isDarkMode ? "text-custom-darkwhite" : "text-custom-lightblack"} text-xl font-bold mb-4`}>Add New Task</h2>
                 <label className="block mb-2 text-xs font-bold text-custom-lightgray">Title</label>
                 <input
                   type="text"
