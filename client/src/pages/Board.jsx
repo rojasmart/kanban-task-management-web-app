@@ -517,12 +517,12 @@ const Board = ({ board }) => {
             <h2 className="text-xl font-bold mb-4">Add New Column</h2>
             <input
               type="text"
-              className="w-full p-2 border border-gray-300 rounded mb-4"
+              className="w-full text-xs p-2 border border-custom-darkwhite focus:border-custom-blue focus:outline-none focus:border-2 rounded mb-4"
               placeholder="Column Name"
               value={newColumnName}
               onChange={(e) => setNewColumnName(e.target.value)}
             />
-            <button className="bg-custom-blue text-custom-white rounded-full p-3 pl-6 pr-6" onClick={handleCreateColumn}>
+            <button className="w-full bg-custom-blue font-bold text-custom-white rounded-full p-3 pl-6 pr-6" onClick={handleCreateColumn}>
               Create Column
             </button>
           </div>
@@ -624,7 +624,7 @@ const Board = ({ board }) => {
                 <div className="mt-4">
                   <label className="text-xs text-custom-lightgray font-semibold">Current Status</label>
                   <select
-                    className="cursor-pointer mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                    className="cursor-pointer mt-1 block w-full pl-3 pr-10 py-2 text-xs border border-custom-darkwhite focus:border-custom-blue focus:outline-none focus:border-2 rounded-md"
                     onChange={(e) => handleMoveTask(e.target.value)}
                   >
                     <option value="">Select Column</option>
