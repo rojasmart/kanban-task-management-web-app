@@ -3,7 +3,7 @@ import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:4000/graphql",
+  uri: "https://kanban-task-management-web-app-t3c5.onrender.com/graphql",
 });
 
 const authLink = setContext((_, { headers }) => {

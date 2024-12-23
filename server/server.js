@@ -8,7 +8,7 @@ require("dotenv").config();
 
 // Define CORS options
 const corsOptions = {
-  origin: ["http://localhost:5173/", "http://localhost:4000/graphql"], // Specify allowed domains
+  origin: ["http://localhost:5173/", "https://kanban-task-management-web-app-t3c5.onrender.com/graphql"], // Specify allowed domains
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Allowed HTTP methods
   credentials: true, // Allow cookies to be sent
 };
@@ -508,7 +508,7 @@ const startServer = async () => {
     .then(() => console.log("MongoDB connected"))
     .catch((err) => console.error("MongoDB connection error:", err));
 
-  app.listen({ port: 4000 }, () => console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`));
+  app.listen({ port: 4000 }, () => console.log(`🚀 Server ready at https://kanban-task-management-web-app-t3c5.onrender.com${server.graphqlPath}`));
 };
 
 startServer();
