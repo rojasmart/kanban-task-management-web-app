@@ -7,4 +7,19 @@
 
 ![image](https://github.com/user-attachments/assets/75ef9075-cb83-4501-9568-bef60a11b3cd)
 
+I created this project as a Fullstack App.
+
+Built with
+
+    React v18
+    Tailwind
+    PostCSS
+    Apollo
+    GraphQL
+    Node
+    MongoDB
+    React-beautiful-dnd
+    Vite
+
+
 
