@@ -20,5 +20,5 @@ I created this project as a Fullstack App.
 - MongoDB
 - React-beautiful-dnd
 - Vite
-
-This project features a Kanban app where I practiced authentication flow with a NoSQL database (MongoDB) and GraphQL, orchestrated with Apollo. I worked on both the front-end and back-end, gaining a deep understanding of data structures and server-side logic to manage tasks efficiently.
+- 
+This project features a Kanban app where I practiced authentication flow with a NoSQL database (MongoDB) and GraphQL, orchestrated with Apollo. I worked on both the front-end and back-end, gaining a deep understanding of data structures and server-side logic. Additionally, I deployed the app using Render, learning how to deploy both the frontend and backend. Tailwind CSS was used for styling, and I focused on structuring the project architecture for scalability and maintainability.
