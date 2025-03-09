@@ -9,17 +9,16 @@
 
 I created this project as a Fullstack App.
 
-Built with
+### Built with
 
-    React v18
-    Tailwind
-    PostCSS
-    Apollo
-    GraphQL
-    Node
-    MongoDB
-    React-beautiful-dnd
-    Vite
+- React v18
+- Tailwind CSS
+- PostCSS
+- Apollo
+- GraphQL
+- Node
+- MongoDB
+- React-beautiful-dnd
+- Vite
 
-
-
+This project features a Kanban app where I practiced authentication flow with a NoSQL database (MongoDB) and GraphQL, orchestrated with Apollo. I worked on both the front-end and back-end, gaining a deep understanding of data structures and server-side logic to manage tasks efficiently.
