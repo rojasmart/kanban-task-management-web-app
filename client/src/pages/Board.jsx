@@ -217,12 +217,15 @@ const Board = ({ board }) => {
       const { data } = await createColumn({
         variables: {
           boardId: board.id,
-          name: newColumnName,
+          name: newColumnName.trim(),
         },
       });
 
       console.log("Server response:", data); // Log the server response
-      const newColumn = data.createColumn;
+      const newColumn = {
+        ...data.createColumn,
+        tasks: [], // Ensure tasks array exists and is initialized
+      };
 
       setBoardState((prevBoard) => ({
         ...prevBoard,
@@ -533,7 +536,11 @@ const Board = ({ board }) => {
               value={newColumnName}
               onChange={(e) => setNewColumnName(e.target.value)}
             />
-            <button className="w-full bg-custom-blue font-bold text-custom-white rounded-full p-3 pl-6 pr-6" onClick={handleCreateColumn}>
+            <button
+              className="w-full bg-custom-blue font-bold text-custom-white rounded-full p-3 pl-6 pr-6"
+              onClick={handleCreateColumn}
+              disabled={!newColumnName.trim()}
+            >
               Create Column
             </button>
           </div>
