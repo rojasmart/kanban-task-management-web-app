@@ -488,7 +488,7 @@ const Board = ({ board }) => {
                               onClick={() => handleCardClick(task)}
                               data-id={task.id} // Pass the task id here
                             >
-                              <h4 className={`${isDarkMode ? "text-custom-darkwhite" : "text-custom-darkgray"} font-bold`}>{task.title}000</h4>
+                              <h4 className={`${isDarkMode ? "text-custom-darkwhite" : "text-custom-darkgray"} font-bold`}>{task.title}</h4>
                               {task.subtasks && task.subtasks.length > 0 && (
                                 <ul className="subtasks list-disc mt-2">
                                   {task.subtasks && task.subtasks.length > 0 && (
